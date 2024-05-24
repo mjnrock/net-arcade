@@ -9,6 +9,8 @@ using Arcade.RPG.Entities;
 using Arcade.RPG.Components;
 using System.Diagnostics;
 using Arcade.RPG.Worlds;
+using Arcade.RPG.Lib;
+using Arcade.RPG.Lib.Models;
 
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
@@ -36,7 +38,7 @@ public class RPG : Game {
 
         this.random = new Random();
 
-        this.World = new World(this);
+        this.World = new AtlasWorld("demoCaveMap", this);
     }
 
     protected override void Initialize() {
@@ -45,22 +47,6 @@ public class RPG : Game {
 
     protected override void LoadContent() {
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        for(int i = 0; i < 25; i++) {
-            var entity = new Entity();
-            entity.AddComponent(EnumComponentType.Physics, new Physics(
-                position: Vector2.One * this.random.Next(0, 1920),
-                velocity: Vector2.One * 32
-            ));
-            entity.AddComponent(EnumComponentType.Graphics, new Graphics(
-                graphicsDevice: GraphicsDevice,
-                size: 50 + (int)Math.Floor((float)this.random.NextDouble() * 200),
-                startColor: Color.Red,
-                endColor: Color.Blue
-            ));
-
-            this.World.AddEntity(entity);
-        }
     }
 
 

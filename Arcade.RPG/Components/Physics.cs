@@ -18,8 +18,5 @@ public class Physics : Component {
         this.Position += this.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
     }
 
-    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
-        // Physics components generally don't draw anything,
-        // so this might be left empty or could log a message if needed.
-    }
+    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {}
 }
