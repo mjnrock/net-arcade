@@ -10,13 +10,13 @@ using Arcade.RPG.Components;
 using System.Diagnostics;
 
 public class RPG : Game {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-    private List<Entity> _entities;
-    private Random _random;
+    private GraphicsDeviceManager graphics;
+    private SpriteBatch spriteBatch;
+    private List<Entity> entities;
+    private Random random;
 
     public RPG() {
-        _graphics = new GraphicsDeviceManager(this);
+        this.graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
@@ -25,15 +25,15 @@ public class RPG : Game {
         int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
         // Set the preferred back buffer size to the screen resolution
-        _graphics.PreferredBackBufferWidth = screenWidth;
-        _graphics.PreferredBackBufferHeight = screenHeight;
+        this.graphics.PreferredBackBufferWidth = screenWidth;
+        this.graphics.PreferredBackBufferHeight = screenHeight;
 
         // Enable full screen mode
-        _graphics.IsFullScreen = true;
-        _graphics.ApplyChanges();
+        this.graphics.IsFullScreen = true;
+        this.graphics.ApplyChanges();
 
-        _entities = new List<Entity>();
-        _random = new Random();
+        this.entities = new List<Entity>();
+        this.random = new Random();
     }
 
     protected override void Initialize() {
@@ -41,15 +41,15 @@ public class RPG : Game {
     }
 
     private float GetRandomVelocityComponent() {
-        return _random.Next(2) == 0 ? -100 : 100;
+        return this.random.Next(2) == 0 ? -100 : 100;
     }
     protected override void LoadContent() {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
         for(int i = 0; i < 25; i++) {
             Vector2 randomPosition = new Vector2(
-                _random.Next(0, _graphics.PreferredBackBufferWidth),
-                _random.Next(0, _graphics.PreferredBackBufferHeight)
+                this.random.Next(0, this.graphics.PreferredBackBufferWidth),
+                this.random.Next(0, this.graphics.PreferredBackBufferHeight)
             );
             Vector2 randomVelocity = new Vector2(
                 GetRandomVelocityComponent(),
@@ -59,7 +59,7 @@ public class RPG : Game {
 
             Graphics graphicsComponent = new Graphics(
                 GraphicsDevice,
-                50 + (int)Math.Floor((float)_random.NextDouble() * 200),
+                50 + (int)Math.Floor((float)this.random.NextDouble() * 200),
                 Color.Red,
                 Color.Blue
             );
@@ -68,7 +68,7 @@ public class RPG : Game {
                 { EnumComponentType.Graphics, graphicsComponent },
                 { EnumComponentType.Physics, physicsComponent }
             });
-            _entities.Add(entity);
+            this.entities.Add(entity);
         }
     }
 
@@ -82,7 +82,7 @@ public class RPG : Game {
         var keyboard = Keyboard.GetState();
         int nudge = 10;
 
-        foreach(var entity in _entities) {
+        foreach(var entity in this.entities) {
             var physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
 
             if(keyboard.IsKeyDown(Keys.Left) || keyboard.IsKeyDown(Keys.A)) {
@@ -105,13 +105,13 @@ public class RPG : Game {
     protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.LightGray);
 
-        _spriteBatch.Begin();
+        this.spriteBatch.Begin();
 
-        foreach(var entity in _entities) {
-            entity.Draw(_spriteBatch);
+        foreach(var entity in this.entities) {
+            entity.Draw(this.spriteBatch);
         }
 
-        _spriteBatch.End();
+        this.spriteBatch.End();
 
         base.Draw(gameTime);
     }

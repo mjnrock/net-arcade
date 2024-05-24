@@ -8,16 +8,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 public class Graphics : Component {
-    private Texture2D _texture;
-    private int _size;
-    private Color _color;
+    public Texture2D texture;
+    public int size;
+    public Color color;
 
     public Graphics(GraphicsDevice graphicsDevice, int size, Color startColor, Color endColor) : base(EnumComponentType.Graphics) {
-        _size = size;
-        _color = InterpolateColor(startColor, endColor, size);
+        this.size = size;
+        this.color = InterpolateColor(startColor, endColor, size);
 
-        _texture = new Texture2D(graphicsDevice, 1, 1);
-        _texture.SetData(new[] { _color });
+        this.texture = new Texture2D(graphicsDevice, 1, 1);
+        this.texture.SetData(new[] { this.color });
     }
 
     private Color InterpolateColor(Color startColor, Color endColor, int size) {
@@ -38,6 +38,6 @@ public class Graphics : Component {
         }
 
         var position = physicsComponent.Position;
-        spriteBatch.Draw(_texture, new Rectangle((int)position.X, (int)position.Y, _size, _size), _color);
+        spriteBatch.Draw(this.texture, new Rectangle((int)position.X, (int)position.Y, this.size, this.size), this.color);
     }
 }

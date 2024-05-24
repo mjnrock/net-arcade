@@ -10,12 +10,12 @@ public class Physics : Component {
     public Vector2 Velocity { get; set; }
 
     public Physics(Vector2 position, Vector2 velocity, string? id = null) : base(id, EnumComponentType.Physics) {
-        Position = position;
-        Velocity = velocity;
+        this.Position = position;
+        this.Velocity = velocity;
     }
 
     public override void Update(GameTime gameTime, Entity entity) {
-        Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        this.Position += this.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
     }
 
     public override void Draw(SpriteBatch spriteBatch, Entity entity) {
