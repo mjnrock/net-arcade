@@ -3,4 +3,5 @@
 public enum EnumComponentType {
     Physics,
     Graphics,
+    Ability,
 };
