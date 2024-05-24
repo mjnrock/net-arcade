@@ -1,11 +1,11 @@
-﻿namespace Arcade.RPG.Lib;
+﻿namespace Arcade.RPG.Lib.Utility;
 
 using System;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework;
 
-public class ColorConverter : JsonConverter<Color> {
+public class HexColorConverter : JsonConverter<Color> {
     public override void WriteJson(JsonWriter writer, Color value, JsonSerializer serializer) {
         writer.WriteValue($"#{value.R:X2}{value.G:X2}{value.B:X2}");
     }
@@ -18,10 +18,10 @@ public class ColorConverter : JsonConverter<Color> {
         }
 
         return new Color(
-            (byte)Convert.ToByte(hex.Substring(1, 2), 16),
-            (byte)Convert.ToByte(hex.Substring(3, 2), 16),
-            (byte)Convert.ToByte(hex.Substring(5, 2), 16),
-            (byte)255 // Fully opaque
+            Convert.ToByte(hex.Substring(1, 2), 16),
+            Convert.ToByte(hex.Substring(3, 2), 16),
+            Convert.ToByte(hex.Substring(5, 2), 16),
+            (byte)255
         );
     }
 }

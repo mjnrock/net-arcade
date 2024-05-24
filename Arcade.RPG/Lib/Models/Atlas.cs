@@ -1,7 +1,9 @@
-﻿namespace Arcade.RPG.Lib.Models; 
+﻿namespace Arcade.RPG.Lib.Models;
 
 using System;
 using System.Collections.Generic;
+
+using Arcade.RPG.Lib.Utility;
 
 using Microsoft.Xna.Framework;
 
@@ -33,6 +35,7 @@ public class Terrain {
     public string Type { get; set; }
     public int? Cost { get; set; }
     public int Mask { get; set; }
+    [JsonConverter(typeof(HexColorConverter))]
     public Color Texture { get; set; }
 }
 

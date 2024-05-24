@@ -14,9 +14,6 @@ public abstract class AtlasMapLoader {
 
         string json = File.ReadAllText(filePath);
 
-        var settings = new JsonSerializerSettings();
-        settings.Converters.Add(new ColorConverter());
-
-        return JsonConvert.DeserializeObject<Atlas>(json, settings);
+        return JsonConvert.DeserializeObject<Atlas>(json);
     }
 }
