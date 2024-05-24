@@ -17,6 +17,17 @@ public class World : Identity {
         this.entityManager = new EntityManager();
     }
 
+    public List<Entity> entities {
+        get {
+            return this.entityManager.entities;
+        }
+    }
+    public List<Entity> cache {
+        get {
+            return this.entityManager.cache;
+        }
+    }
+
     public World AddEntity(Entity entity) {
         this.entityManager.Add(entity);
 
@@ -38,14 +49,23 @@ public class World : Identity {
         return this;
     }
 
-    public void Update(GameTime gameTime) {
+    public void Update(RPG game, GameTime gameTime) {
+        this.entityManager.ClearCache();
+        this.entities.ForEach(entity => this.entityManager.WriteCache(entity));
+
         foreach(Entity entity in this.entityManager.cache) {
-            entity.Update(gameTime);
+            entity.Update(game, gameTime);
         }
     }
-    public void Draw(SpriteBatch spriteBatch) {
+    public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
+        graphicsDevice.Clear(Color.LightGray);
+
+        spriteBatch.Begin();
+
         foreach(Entity entity in this.entityManager.cache) {
-            entity.Draw(spriteBatch);
+            entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
         }
+
+        spriteBatch.End();
     }
 }

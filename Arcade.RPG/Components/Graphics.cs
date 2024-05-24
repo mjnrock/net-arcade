@@ -25,12 +25,12 @@ public class Graphics : Component {
         return Color.Lerp(startColor, endColor, factor);
     }
 
-    public override void Update(GameTime gameTime, Entity entity) {
+    public override void Update(RPG game, GameTime gameTime, Entity entity) {
         // Graphics components may not need to update anything,
         // but this could include animations or other visual updates.
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Entity entity) {
+    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
         // Draw the entity at its current position
         var physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
         if(physicsComponent == null) {

@@ -32,18 +32,15 @@ public class Entity : Identity {
         return this.components.Remove(type);
     }
 
-    public void Update(GameTime gameTime) {
+    public void Update(RPG game, GameTime gameTime) {
         foreach(var component in this.components.Values) {
-            component.Update(gameTime, this);
+            component.Update(game, gameTime, this);
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch) {
-        var graphicsComponent = GetComponent<Graphics>(EnumComponentType.Graphics);
-        var physicsComponent = GetComponent<Physics>(EnumComponentType.Physics);
+    public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
+        Graphics graphicsComponent = GetComponent<Graphics>(EnumComponentType.Graphics);
 
-        if(graphicsComponent != null && physicsComponent != null) {
-            graphicsComponent.Draw(spriteBatch, this);
-        }
+        graphicsComponent.Draw(game, graphicsDevice, gameTime, spriteBatch, this);
     }
 }

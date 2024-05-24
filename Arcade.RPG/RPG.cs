@@ -8,12 +8,14 @@ using Microsoft.Xna.Framework.Input;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Components;
 using System.Diagnostics;
+using Arcade.RPG.Worlds;
 
 public class RPG : Game {
-    private GraphicsDeviceManager graphics;
-    private SpriteBatch spriteBatch;
-    private List<Entity> entities;
-    private Random random;
+    public GraphicsDeviceManager graphics;
+    public SpriteBatch spriteBatch;
+    public Random random;
+
+    public World World { get; set; }
 
     public RPG() {
         this.graphics = new GraphicsDeviceManager(this);
@@ -32,43 +34,32 @@ public class RPG : Game {
         this.graphics.IsFullScreen = true;
         this.graphics.ApplyChanges();
 
-        this.entities = new List<Entity>();
         this.random = new Random();
+
+        this.World = new World(this);
     }
 
     protected override void Initialize() {
         base.Initialize();
     }
 
-    private float GetRandomVelocityComponent() {
-        return this.random.Next(2) == 0 ? -100 : 100;
-    }
     protected override void LoadContent() {
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
         for(int i = 0; i < 25; i++) {
-            Vector2 randomPosition = new Vector2(
-                this.random.Next(0, this.graphics.PreferredBackBufferWidth),
-                this.random.Next(0, this.graphics.PreferredBackBufferHeight)
-            );
-            Vector2 randomVelocity = new Vector2(
-                GetRandomVelocityComponent(),
-                GetRandomVelocityComponent()
-            );
-            Physics physicsComponent = new Physics(randomPosition, randomVelocity);
+            var entity = new Entity();
+            entity.AddComponent(EnumComponentType.Physics, new Physics(
+                position: Vector2.One * this.random.Next(0, 1920),
+                velocity: Vector2.One * 32
+            ));
+            entity.AddComponent(EnumComponentType.Graphics, new Graphics(
+                graphicsDevice: GraphicsDevice,
+                size: 50 + (int)Math.Floor((float)this.random.NextDouble() * 200),
+                startColor: Color.Red,
+                endColor: Color.Blue
+            ));
 
-            Graphics graphicsComponent = new Graphics(
-                GraphicsDevice,
-                50 + (int)Math.Floor((float)this.random.NextDouble() * 200),
-                Color.Red,
-                Color.Blue
-            );
-
-            Entity entity = new Entity(new Dictionary<EnumComponentType, IComponent> {
-                { EnumComponentType.Graphics, graphicsComponent },
-                { EnumComponentType.Physics, physicsComponent }
-            });
-            this.entities.Add(entity);
+            this.World.AddEntity(entity);
         }
     }
 
@@ -79,39 +70,13 @@ public class RPG : Game {
             Exit();
         }
 
-        var keyboard = Keyboard.GetState();
-        int nudge = 10;
-
-        foreach(var entity in this.entities) {
-            var physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
-
-            if(keyboard.IsKeyDown(Keys.Left) || keyboard.IsKeyDown(Keys.A)) {
-                physicsComponent.Position = new Vector2(physicsComponent.Position.X - nudge, physicsComponent.Position.Y);
-            } else if(keyboard.IsKeyDown(Keys.Right) || keyboard.IsKeyDown(Keys.D)) {
-                physicsComponent.Position = new Vector2(physicsComponent.Position.X + nudge, physicsComponent.Position.Y);
-            }
-            if(keyboard.IsKeyDown(Keys.Up) || keyboard.IsKeyDown(Keys.W)) {
-                physicsComponent.Position = new Vector2(physicsComponent.Position.X, physicsComponent.Position.Y - nudge);
-            } else if(keyboard.IsKeyDown(Keys.Down) || keyboard.IsKeyDown(Keys.S)) {
-                physicsComponent.Position = new Vector2(physicsComponent.Position.X, physicsComponent.Position.Y + nudge);
-            }
-
-            entity.Update(gameTime);
-        }
+        this.World.Update(this, gameTime);
 
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime) {
-        GraphicsDevice.Clear(Color.LightGray);
-
-        this.spriteBatch.Begin();
-
-        foreach(var entity in this.entities) {
-            entity.Draw(this.spriteBatch);
-        }
-
-        this.spriteBatch.End();
+        this.World.Draw(this, GraphicsDevice, gameTime, this.spriteBatch);
 
         base.Draw(gameTime);
     }

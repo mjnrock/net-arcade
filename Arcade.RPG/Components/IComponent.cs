@@ -9,6 +9,6 @@ public interface IComponent {
     string id { get; set; }
     EnumComponentType type { get; set; }
 
-    void Update(GameTime gameTime, Entity entity);
-    void Draw(SpriteBatch spriteBatch, Entity entity);
+    void Update(RPG game, GameTime gameTime, Entity entity);
+    void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity);
 }

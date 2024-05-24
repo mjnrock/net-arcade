@@ -22,6 +22,6 @@ public abstract class Component : IComponent {
 
     protected Component(EnumComponentType type) : this(null, type) { }
 
-    public virtual void Update(GameTime gameTime, Entity entity) { }
-    public virtual void Draw(SpriteBatch spriteBatch, Entity entity) { }
+    public virtual void Update(RPG game, GameTime gameTime, Entity entity) { }
+    public virtual void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) { }
 }
