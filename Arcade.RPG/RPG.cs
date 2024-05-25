@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Arcade.RPG.Worlds;
-using Arcade.RPG.Config;
+using Arcade.RPG.Configs;
 using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ public class RPG : Game {
     public SpriteBatch spriteBatch;
     public Random random;
 
-    public Konfig Konfig { get; set; }
+    public Config Config { get; set; }
     public World World { get; set; }
 
     private MouseState previousMouseState = Mouse.GetState();
@@ -41,8 +41,8 @@ public class RPG : Game {
 
         this.World = new AtlasWorld("demoCaveMap", this);
 
-        this.Konfig = new Konfig();
-        this.Konfig.Viewport.Subject = new Entity {
+        this.Config = new Configs.Config();
+        this.Config.Viewport.Subject = new Entity {
             components = new Dictionary<EnumComponentType, IComponent> {
                 { EnumComponentType.Physics, new Physics(
                     position: new Vector2(2, 2),
@@ -56,7 +56,7 @@ public class RPG : Game {
             }
         };
 
-        this.World.AddEntity(this.Konfig.Viewport.Subject);
+        this.World.AddEntity(this.Config.Viewport.Subject);
     }
 
     protected override void Initialize() {
@@ -78,7 +78,7 @@ public class RPG : Game {
         }
 
 
-        Physics physics = this.Konfig.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
+        Physics physics = this.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
         Vector2 newVelocity = Vector2.Zero;
 
         if(keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left)) {
@@ -97,11 +97,11 @@ public class RPG : Game {
 
         int scrollDelta = mouseState.ScrollWheelValue - this.previousMouseState.ScrollWheelValue;
         if(scrollDelta > 0) {
-            this.Konfig.Viewport.Zoom.Current *= 1 + this.Konfig.Viewport.Zoom.Step;
+            this.Config.Viewport.Zoom.Current *= 1 + this.Config.Viewport.Zoom.Step;
         } else if(scrollDelta < 0) {
-            this.Konfig.Viewport.Zoom.Current *= 1 - this.Konfig.Viewport.Zoom.Step;
+            this.Config.Viewport.Zoom.Current *= 1 - this.Config.Viewport.Zoom.Step;
         }
-        this.Konfig.Viewport.Zoom.Current = Math.Min(this.Konfig.Viewport.Zoom.Max, Math.Max(this.Konfig.Viewport.Zoom.Min, this.Konfig.Viewport.Zoom.Current));
+        this.Config.Viewport.Zoom.Current = Math.Min(this.Config.Viewport.Zoom.Max, Math.Max(this.Config.Viewport.Zoom.Min, this.Config.Viewport.Zoom.Current));
 
 
 
@@ -115,9 +115,9 @@ public class RPG : Game {
     protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.Black);
 
-        float zoom = this.Konfig.Viewport.Zoom.Current;
+        float zoom = this.Config.Viewport.Zoom.Current;
 
-        Physics subjectPhysics = this.Konfig.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
+        Physics subjectPhysics = this.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
         Vector2 subjectPosition = subjectPhysics.Position;
 
         float viewportWidth = GraphicsDevice.Viewport.Width;
@@ -125,8 +125,8 @@ public class RPG : Game {
 
         Vector3 viewportCenter = new Vector3(viewportWidth / 2f, viewportHeight / 2f, 0);
 
-        float pixelX = -subjectPosition.X * this.Konfig.Viewport.TileBaseWidth - this.Konfig.Viewport.TileBaseWidth / 2;
-        float pixelY = -subjectPosition.Y * this.Konfig.Viewport.TileBaseHeight - this.Konfig.Viewport.TileBaseHeight / 2;
+        float pixelX = -subjectPosition.X * this.Config.Viewport.TileBaseWidth - this.Config.Viewport.TileBaseWidth / 2;
+        float pixelY = -subjectPosition.Y * this.Config.Viewport.TileBaseHeight - this.Config.Viewport.TileBaseHeight / 2;
 
         Matrix translationMatrix = Matrix.CreateTranslation(
             new Vector3(

@@ -1,4 +1,4 @@
-﻿namespace Arcade.RPG.Config;
+﻿namespace Arcade.RPG.Configs;
 
 using Microsoft.Xna.Framework;
 

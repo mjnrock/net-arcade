@@ -1,4 +1,4 @@
-﻿namespace Arcade.RPG.Config.Models;
+﻿namespace Arcade.RPG.Configs.Models;
 
 public class Settings {
     public bool ArcadeMode { get; set; } = false;

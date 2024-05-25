@@ -1,4 +1,4 @@
-﻿namespace Arcade.RPG.Config.Models;
+﻿namespace Arcade.RPG.Configs.Models;
 
 using System.Collections.Generic;
 

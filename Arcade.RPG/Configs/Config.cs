@@ -1,18 +1,18 @@
-﻿namespace Arcade.RPG.Config;
+﻿namespace Arcade.RPG.Configs;
 
 using System.Collections.Generic;
 
 using Arcade.RPG.Components;
-using Arcade.RPG.Config.Models;
+using Arcade.RPG.Configs.Models;
 
 using Microsoft.Xna.Framework;
 
-public class Konfig {
+public class Config {
     public Settings Settings { get; set; }
     public Viewport Viewport { get; set; }
     public Dictionary<EnumResourceType, Resource> Resources { get; set; }
 
-    public Konfig() {
+    public Config() {
         this.Settings = new Settings {
             ArcadeMode = false,
             Difficulty = 1.0f

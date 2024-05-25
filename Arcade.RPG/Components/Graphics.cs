@@ -48,11 +48,11 @@ public class Graphics : Component {
 
         Vector2 position = physicsComponent.Position;
 
-        int pixelX = (int)(position.X * game.Konfig.Viewport.TileBaseWidth);
-        int pixelY = (int)(position.Y * game.Konfig.Viewport.TileBaseHeight);
+        int pixelX = (int)(position.X * game.Config.Viewport.TileBaseWidth);
+        int pixelY = (int)(position.Y * game.Config.Viewport.TileBaseHeight);
 
-        int width = game.Konfig.Viewport.TileBaseWidth;
-        int height = game.Konfig.Viewport.TileBaseHeight;
+        int width = game.Config.Viewport.TileBaseWidth;
+        int height = game.Config.Viewport.TileBaseHeight;
 
         if(entity is TerrainEntity) {
             spriteBatch.Draw(this.texture, new Rectangle(
@@ -62,7 +62,7 @@ public class Graphics : Component {
                 height: height
             ), this.color);
         } else {
-            Texture2D circle = Graphics.CreateCircleTexture(graphicsDevice, game.Konfig.Viewport.TileBaseWidth / 2);
+            Texture2D circle = Graphics.CreateCircleTexture(graphicsDevice, game.Config.Viewport.TileBaseWidth / 2);
             spriteBatch.Draw(circle, new Rectangle(
                 x: pixelX,
                 y: pixelY,
