@@ -1,17 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Content\ConsoleFont.xnb" />
-	  <None Remove="Content\demoCaveMap.json" />
-	  <None Remove="Content\Data\maps\demoCaveMap.json" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Content Include="Content\Data\maps\demoCaveMap.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<None Update="Content\**\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303">

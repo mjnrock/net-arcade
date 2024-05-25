@@ -60,14 +60,8 @@ public class World : Identity {
         }
     }
     public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
-        graphicsDevice.Clear(Color.LightGray);
-
-        spriteBatch.Begin();
-
         foreach(Entity entity in this.entityManager.cache) {
             entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
         }
-
-        spriteBatch.End();
     }
 }

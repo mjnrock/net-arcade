@@ -1,22 +1,18 @@
 ﻿namespace Arcade.RPG;
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Arcade.RPG.Entities;
-using Arcade.RPG.Components;
-using System.Diagnostics;
 using Arcade.RPG.Worlds;
-using Arcade.RPG.Lib;
-using Arcade.RPG.Lib.Models;
+using Arcade.RPG.Config;
 
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
     public SpriteBatch spriteBatch;
     public Random random;
 
+    public Konfig Konfig { get; set; }
     public World World { get; set; }
 
     public RPG() {
@@ -39,6 +35,8 @@ public class RPG : Game {
         this.random = new Random();
 
         this.World = new AtlasWorld("demoCaveMap", this);
+
+        this.Konfig = new Konfig();
     }
 
     protected override void Initialize() {
@@ -62,7 +60,16 @@ public class RPG : Game {
     }
 
     protected override void Draw(GameTime gameTime) {
+        GraphicsDevice.Clear(Color.LightGray);
+
+        float zoom = this.Konfig.Viewport.Zoom;
+        Matrix scalingMatrix = Matrix.CreateScale(zoom, zoom, 1f);
+
+        this.spriteBatch.Begin(transformMatrix: scalingMatrix);
+
         this.World.Draw(this, GraphicsDevice, gameTime, this.spriteBatch);
+
+        this.spriteBatch.End();
 
         base.Draw(gameTime);
     }

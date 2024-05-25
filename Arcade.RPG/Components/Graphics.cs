@@ -1,5 +1,7 @@
 ﻿namespace Arcade.RPG.Components;
 
+using System.Diagnostics;
+
 using Arcade.RPG.Entities;
 
 using Microsoft.Xna.Framework;
@@ -22,13 +24,15 @@ public class Graphics : Component {
     public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
         Physics physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
 
-        int size = 32;
         Vector2 position = physicsComponent.Position;
-        spriteBatch.Draw(this.texture, new Rectangle(
-            x: (int)position.X * size,
-            y: (int)position.Y * size,
-            width: size,
-            height: size
-        ), this.color);
+
+        if(entity is TerrainEntity) {
+            spriteBatch.Draw(this.texture, new Rectangle(
+                x: (int)position.X * game.Konfig.Viewport.TileBaseWidth,
+                y: (int)position.Y * game.Konfig.Viewport.TileBaseHeight,
+                width: game.Konfig.Viewport.TileBaseWidth,
+                height: game.Konfig.Viewport.TileBaseHeight
+            ), this.color);
+        }
     }
 }
