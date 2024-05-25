@@ -25,7 +25,12 @@ public class Konfig {
             TileY = 0,
             TileXRadius = 7,
             TileYRadius = 5,
-            Zoom = 3.0f
+            Zoom = new Zoom {
+                Current = 1.0f,
+                Step = 0.1f,
+                Min = 0.1f,
+                Max = 20.0f
+            }
         };
 
         this.Resources = new Dictionary<EnumResourceType, Resource> {
