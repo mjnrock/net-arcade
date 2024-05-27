@@ -18,7 +18,7 @@ public class RPG : Game {
 
     public Config Config { get; set; }
 
-    public Dictionary<EnumSystemType, System> Systems { get; set; } = new Dictionary<EnumSystemType, System> {
+    public Dictionary<EnumSystemType, ISystem> Systems { get; set; } = new Dictionary<EnumSystemType, ISystem> {
         { EnumSystemType.World, new WorldSystem() },
     };
 
@@ -111,7 +111,9 @@ public class RPG : Game {
         this.Config.Viewport.Zoom.Current = Math.Min(this.Config.Viewport.Zoom.Max, Math.Max(this.Config.Viewport.Zoom.Min, this.Config.Viewport.Zoom.Current));
         this.Config.SyncWithSubject();
 
-        this.World.Update(this, gameTime);
+        foreach(KeyValuePair<EnumSystemType, ISystem> system in this.Systems) {
+            system.Value.Update(this, gameTime);
+        }
 
         base.Update(gameTime);
 

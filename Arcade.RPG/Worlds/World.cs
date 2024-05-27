@@ -12,76 +12,53 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 public class World : Identity {
-    public RPG game;
-    public EntityManager entityManager;
+    public RPG Game;
+    public EntityManager EntityManager;
 
     public World(RPG game) : base() {
-        this.game = game;
-        this.entityManager = new EntityManager();
+        this.Game = game;
+        this.EntityManager = new EntityManager();
     }
 
     public List<Entity> entities {
         get {
-            return this.entityManager.entities;
+            return this.EntityManager.entities;
         }
     }
     public List<Entity> cache {
         get {
-            return this.entityManager.cache;
+            return this.EntityManager.cache;
         }
     }
 
     public World AddEntity(Entity entity) {
-        this.entityManager.Add(entity);
+        this.EntityManager.Add(entity);
 
         return this;
     }
     public World AddEntities(List<Entity> entities) {
-        this.entityManager.Add(entities);
+        this.EntityManager.Add(entities);
 
         return this;
     }
     public World RemoveEntity(Entity entity) {
-        this.entityManager.Remove(entity);
+        this.EntityManager.Remove(entity);
 
         return this;
     }
     public World RemoveEntities(List<Entity> entities) {
-        this.entityManager.Remove(entities);
+        this.EntityManager.Remove(entities);
 
         return this;
     }
 
     public void Update(RPG game, GameTime gameTime) {
-        this.entityManager.ClearCache();
-
-        Entity viewportSubject = this.game.Config.Viewport.Subject;
-        Components.Physics physics = viewportSubject.GetComponent<Components.Physics>(EnumComponentType.Physics);
-
-        if(physics != null) {
-            this.entities.ForEach(entity => {
-                Components.Physics physics = entity.GetComponent<Components.Physics>(EnumComponentType.Physics);
-
-                if(physics != null) {
-                    Vector2 position = physics.Position;
-
-                    if(game.Config.IsWithinViewport(position, 1.0f)) {
-                        this.entityManager.WriteCache(entity);
-                    }
-                }
-            });
-        } else {
-            this.entities.ForEach(entity => {
-                this.entityManager.WriteCache(entity);
-            });
-        }
-
-        foreach(Entity entity in this.entityManager.cache) {
+        foreach(Entity entity in this.EntityManager.cache) {
             entity.Update(game, gameTime);
         }
     }
     public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
-        foreach(Entity entity in this.entityManager.cache) {
+        foreach(Entity entity in this.EntityManager.cache) {
             entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
         }
     }
