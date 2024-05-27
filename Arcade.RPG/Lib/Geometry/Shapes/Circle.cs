@@ -4,38 +4,26 @@ using System;
 
 using Microsoft.Xna.Framework;
 
-public class Circle : Ellipse {
-    public Circle(Vector2 origin, float radius) : base(origin, radius, radius) { }
+public class Circle : Shape {
+    public float Radius { get; set; }
 
-    public float Radius {
-        get => SemiMajorAxis; // or SemiMinorAxis since they are the same
-        set {
-            if(value <= 0) {
-                throw new ArgumentException("Radius must be a positive value.");
-            }
-            SemiMajorAxis = value;
-            SemiMinorAxis = value;
-        }
-    }
-
-    public Vector2 Center {
-        get => Origin;
+    public Circle(Vector2 origin, float radius) : base(origin) {
+        this.Radius = radius;
     }
 
     public float Diameter {
-        get => 2 * Radius;
+        get => this.Radius * 2;
+        set => this.Radius = value / 2;
     }
 
-    public new float Area {
-        get => MathF.PI * MathF.Pow(Radius, 2);
+    public float Circumference {
+        get => (float)(2 * Math.PI * this.Radius);
+        set => this.Radius = value / (float)(2 * Math.PI);
     }
 
-    public new float Circumference {
-        get => 2 * MathF.PI * Radius;
-    }
-
-    public override bool Contains(Vector2 point) {
-        return Vector2.Distance(Origin, point) <= Radius;
+    public float Area {
+        get => (float)(Math.PI * Math.Pow(this.Radius, 2));
+        set => this.Radius = (float)Math.Sqrt(value / Math.PI);
     }
 
     public static Circle Create(Vector2 origin, float radius) {

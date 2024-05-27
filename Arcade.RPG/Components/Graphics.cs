@@ -5,34 +5,10 @@ using Arcade.RPG.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-
 public class Graphics : Component {
     public Texture2D texture;
     public int size;
     public Color color;
-
-    public static Texture2D CreateCircleTexture(GraphicsDevice graphicsDevice, int radius) {
-        int diameter = radius * 2;
-        Texture2D texture = new Texture2D(graphicsDevice, diameter, diameter);
-        Color[] colorData = new Color[diameter * diameter];
-
-        float radiussq = radius * radius;
-
-        for(int y = 0; y < diameter; y++) {
-            for(int x = 0; x < diameter; x++) {
-                int index = y * diameter + x;
-                Vector2 pos = new Vector2(x - radius, y - radius);
-                if(pos.LengthSquared() <= radiussq) {
-                    colorData[index] = Color.White;
-                } else {
-                    colorData[index] = Color.Transparent;
-                }
-            }
-        }
-
-        texture.SetData(colorData);
-        return texture;
-    }
 
     public Graphics(GraphicsDevice graphicsDevice, Color color) : base(EnumComponentType.Graphics) {
         this.color = color;
@@ -62,23 +38,65 @@ public class Graphics : Component {
                 height: height
             ), this.color);
         } else {
-            if(physicsComponent.Model is Lib.Geometry.Shapes.Rectangle rectangle) {
-                spriteBatch.Draw(this.texture, new Rectangle(
-                    x: pixelX,
-                    y: pixelY,
-                    width: (int)(width * rectangle.Width),
-                    height: (int)(height * rectangle.Height)
-                ), this.color);
-            } else if(physicsComponent.Model is Lib.Geometry.Shapes.Circle) {
-                Texture2D circle = Graphics.CreateCircleTexture(graphicsDevice, game.Config.Viewport.TileBaseWidth / 2);
-                spriteBatch.Draw(circle, new Rectangle(
-                    x: pixelX,
-                    y: pixelY,
-                    width: width,
-                    height: height
-                ), this.color);
+            // Draw based on the shape
+            if(physicsComponent.Model is Lib.Geometry.Shapes.Shape shape) {
+                if(shape is Lib.Geometry.Shapes.Circle circle) {
+                    int radius = (int)(circle.Radius * game.Config.Viewport.TileBaseWidth);
+
+                    Texture2D circleTexture = CreateCircleTexture(graphicsDevice, radius, this.color);
+                    spriteBatch.Draw(
+                        circleTexture,
+                        new Vector2(pixelX - radius, pixelY - radius),
+                        this.color
+                    );
+                } else if(shape is Lib.Geometry.Shapes.Rectangle rectangle) {
+                    spriteBatch.Draw(
+                        this.texture,
+                        new Microsoft.Xna.Framework.Rectangle(
+                            (int)(pixelX),
+                            (int)(pixelY),
+                            (int)(rectangle.Width * game.Config.Viewport.TileBaseWidth),
+                            (int)(rectangle.Height * game.Config.Viewport.TileBaseHeight)
+                        ),
+                        this.color
+                    );
+                } else {
+                    spriteBatch.Draw(
+                        this.texture,
+                        new Microsoft.Xna.Framework.Rectangle(
+                            pixelX,
+                            pixelY,
+                            width,
+                            height
+                        ),
+                        this.color
+                    );
+                }
             }
         }
     }
 
+
+    private static Texture2D CreateCircleTexture(GraphicsDevice graphicsDevice, int radius, Color color) {
+        int diameter = radius * 2;
+        Texture2D texture = new Texture2D(graphicsDevice, diameter, diameter);
+        Color[] data = new Color[diameter * diameter];
+
+        float radiiSquared = radius * radius;
+
+        for(int x = 0; x < diameter; x++) {
+            for(int y = 0; y < diameter; y++) {
+                int index = x * diameter + y;
+                Vector2 pos = new Vector2(x - radius, y - radius);
+                if(pos.LengthSquared() <= radiiSquared) {
+                    data[index] = color;
+                } else {
+                    data[index] = Color.Transparent;
+                }
+            }
+        }
+
+        texture.SetData(data);
+        return texture;
+    }
 }

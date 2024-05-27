@@ -52,15 +52,15 @@ public class RPG : Game {
         this.Config.Viewport.Subject = new Entity {
             components = new Dictionary<EnumComponentType, IComponent> {
                 { EnumComponentType.Physics, new Physics(
-                    //model: new Lib.Geometry.Shapes.Circle(
-                    //    origin: new Vector2(2, 2),
-                    //    radius: 0.5f
-                    //),
-                    model: new Lib.Geometry.Shapes.Rectangle(
+                    model: new Lib.Geometry.Shapes.Circle(
                         origin: new Vector2(2, 2),
-                        width: 2,
-                        height: 1
+                        radius: 1.0f
                     ),
+                    //model: new Lib.Geometry.Shapes.Rectangle(
+                    //    origin: new Vector2(2, 2),
+                    //    width: 1,
+                    //    height: 1
+                    //),
                     velocity: Vector2.Zero,
                     speed: 4.0f
                 )},
@@ -85,11 +85,11 @@ public class RPG : Game {
                     { EnumComponentType.Physics, new Physics(
                         //model: new Lib.Geometry.Shapes.Circle(
                         //    origin: new Vector2(3,3),
-                        //    radius: 0.5f
+                        //    radius: 1.5f
                         //),
                         model: new Lib.Geometry.Shapes.Rectangle(
                             origin: new Vector2(3, 3),
-                            width: 1,
+                            width: 2,
                             height: 1
                         ),
                         velocity: Vector2.Zero,
