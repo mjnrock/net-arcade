@@ -30,48 +30,38 @@ public class Graphics : Component {
         int width = game.Config.Viewport.TileBaseWidth;
         int height = game.Config.Viewport.TileBaseHeight;
 
-        if(entity is TerrainEntity) {
-            spriteBatch.Draw(this.texture, new Rectangle(
-                x: pixelX,
-                y: pixelY,
-                width: width,
-                height: height
-            ), this.color);
-        } else {
-            // Draw based on the shape
-            if(physicsComponent.Model is Lib.Geometry.Shapes.Shape shape) {
-                if(shape is Lib.Geometry.Shapes.Circle circle) {
-                    int radius = (int)(circle.Radius * game.Config.Viewport.TileBaseWidth);
+        if(physicsComponent.Model is Lib.Geometry.Shapes.Shape shape) {
+            if(shape is Lib.Geometry.Shapes.Circle circle) {
+                int radius = (int)(circle.Radius * game.Config.Viewport.TileBaseWidth);
 
-                    Texture2D circleTexture = CreateCircleTexture(graphicsDevice, radius, this.color);
-                    spriteBatch.Draw(
-                        circleTexture,
-                        new Vector2(pixelX - radius, pixelY - radius),
-                        this.color
-                    );
-                } else if(shape is Lib.Geometry.Shapes.Rectangle rectangle) {
-                    spriteBatch.Draw(
-                        this.texture,
-                        new Microsoft.Xna.Framework.Rectangle(
-                            (int)(pixelX),
-                            (int)(pixelY),
-                            (int)(rectangle.Width * game.Config.Viewport.TileBaseWidth),
-                            (int)(rectangle.Height * game.Config.Viewport.TileBaseHeight)
-                        ),
-                        this.color
-                    );
-                } else {
-                    spriteBatch.Draw(
-                        this.texture,
-                        new Microsoft.Xna.Framework.Rectangle(
-                            pixelX,
-                            pixelY,
-                            width,
-                            height
-                        ),
-                        this.color
-                    );
-                }
+                Texture2D circleTexture = CreateCircleTexture(graphicsDevice, radius, this.color);
+                spriteBatch.Draw(
+                    circleTexture,
+                    new Vector2(pixelX - radius, pixelY - radius),
+                    this.color
+                );
+            } else if(shape is Lib.Geometry.Shapes.Rectangle rectangle) {
+                spriteBatch.Draw(
+                    this.texture,
+                    new Microsoft.Xna.Framework.Rectangle(
+                        (int)(pixelX),
+                        (int)(pixelY),
+                        (int)(rectangle.Width * game.Config.Viewport.TileBaseWidth),
+                        (int)(rectangle.Height * game.Config.Viewport.TileBaseHeight)
+                    ),
+                    this.color
+                );
+            } else {
+                spriteBatch.Draw(
+                    this.texture,
+                    new Microsoft.Xna.Framework.Rectangle(
+                        pixelX,
+                        pixelY,
+                        width,
+                        height
+                    ),
+                    this.color
+                );
             }
         }
     }

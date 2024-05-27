@@ -23,6 +23,8 @@ public class PhysicsSystem : System {
 
         foreach(Entity entity1 in entMgr.cache) {
             foreach(Entity entity2 in entMgr.cache) {
+                if(entity2 is TerrainEntity) continue;
+
                 if(entity1 != entity2 && entity1 == game.Config.Viewport.Subject) {
                     Components.Physics physics1 = entity1.GetComponent<Components.Physics>(Components.EnumComponentType.Physics);
                     Components.Physics physics2 = entity2.GetComponent<Components.Physics>(Components.EnumComponentType.Physics);
