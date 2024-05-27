@@ -1,17 +1,32 @@
-﻿using Arcade.RPG.Components;
+﻿namespace Arcade.RPG.Systems;
+
+using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Worlds;
 
+using global::System.Diagnostics;
+
 using Microsoft.Xna.Framework;
 
-namespace Arcade.RPG.Systems;
-
-public class WorldSystem : ISystem {
-    public WorldSystem() {
-
+public class WorldSystem : System {
+    public WorldSystem(RPG game) : base(game) { }
+    public enum EnumAction {
+        JoinWorld
     }
 
-    public void Update(RPG game, GameTime gameTime) {
+    public override void Receive(Message message) {
+        Debug.WriteLine($"WorldSystem received message: {message.Type}");
+
+        if(message.Type == EnumAction.JoinWorld.ToString()) {
+            Entity entity = message.Payload;
+
+            if(entity != null) {
+                this.Game.World.AddEntity(entity);
+            }
+        }
+    }
+
+    public override void Update(RPG game, GameTime gameTime) {
         World world = game.World;
         EntityManager entMgr = world.EntityManager;
         entMgr.ClearCache();
@@ -39,6 +54,4 @@ public class WorldSystem : ISystem {
 
         world.Update(game, gameTime);
     }
-
-    public void Draw(RPG game, GameTime gameTime) { }
 }

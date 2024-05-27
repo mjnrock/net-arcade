@@ -14,13 +14,11 @@ using Arcade.RPG.Systems;
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
     public SpriteBatch spriteBatch;
-    public Random random;
+    public Random random = new Random();
 
     public Config Config { get; set; }
 
-    public Dictionary<EnumSystemType, ISystem> Systems { get; set; } = new Dictionary<EnumSystemType, ISystem> {
-        { EnumSystemType.World, new WorldSystem() },
-    };
+    public Dictionary<EnumSystemType, System> Systems { get; set; }
 
     public World World { get; set; }
 
@@ -31,19 +29,19 @@ public class RPG : Game {
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
-        // Retrieve the screen resolution
         int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         int screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-        // Set the preferred back buffer size to the screen resolution
         this.graphics.PreferredBackBufferWidth = screenWidth;
         this.graphics.PreferredBackBufferHeight = screenHeight;
 
-        // Enable full screen mode
         this.graphics.IsFullScreen = true;
         this.graphics.ApplyChanges();
 
-        this.random = new Random();
+
+        this.Systems = new Dictionary<EnumSystemType, System> {
+            { EnumSystemType.World, new WorldSystem(this) }
+        };
 
         this.World = new AtlasWorld("demoCaveMap", this);
 
@@ -62,7 +60,15 @@ public class RPG : Game {
             }
         };
 
-        this.World.AddEntity(this.Config.Viewport.Subject);
+        this.Route(EnumSystemType.World, new Message(
+            type: WorldSystem.EnumAction.JoinWorld,
+            payload: this.Config.Viewport.Subject
+        ));
+        this.Config.SyncWithSubject();
+    }
+
+    public void Route(EnumSystemType to, Message message) {
+        this.Systems[to].Receive(message);
     }
 
     protected override void Initialize() {
@@ -111,7 +117,7 @@ public class RPG : Game {
         this.Config.Viewport.Zoom.Current = Math.Min(this.Config.Viewport.Zoom.Max, Math.Max(this.Config.Viewport.Zoom.Min, this.Config.Viewport.Zoom.Current));
         this.Config.SyncWithSubject();
 
-        foreach(KeyValuePair<EnumSystemType, ISystem> system in this.Systems) {
+        foreach(KeyValuePair<EnumSystemType, System> system in this.Systems) {
             system.Value.Update(this, gameTime);
         }
 
