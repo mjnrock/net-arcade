@@ -1,4 +1,6 @@
-﻿using Arcade.RPG.Lib.Geometry.Shapes;
+﻿using System.Diagnostics;
+
+using Arcade.RPG.Lib.Geometry.Shapes;
 
 namespace Arcade.RPG.Lib.Geometry.Collisions;
 
@@ -24,6 +26,9 @@ public class CollideRectangle {
     }
 
     public static bool WithRectangle(Rectangle rectangle1, Rectangle rectangle2) {
+        Debug.WriteLine($"Rectangle1: ({rectangle1.TopLeft}, {rectangle1.TopRight}, {rectangle1.BottomLeft}, {rectangle1.BottomRight})");
+        Debug.WriteLine($"Rectangle2: ({rectangle2.TopLeft}, {rectangle2.TopRight}, {rectangle2.BottomLeft}, {rectangle2.BottomRight})");
+        Debug.WriteLine($"Rectangle1: ({rectangle1.Contains(rectangle2.TopLeft)}, {rectangle1.Contains(rectangle2.TopRight)}, {rectangle1.Contains(rectangle2.BottomLeft)}, {rectangle1.Contains(rectangle2.BottomRight)})");
         return rectangle1.Contains(rectangle2.TopLeft) || rectangle1.Contains(rectangle2.TopRight) || rectangle1.Contains(rectangle2.BottomLeft) || rectangle1.Contains(rectangle2.BottomRight);
     }
 
@@ -32,12 +37,12 @@ public class CollideRectangle {
             return WithCircle(rectangle1, circle);
         } else if(shape is Ellipse ellipse) {
             return WithEllipse(rectangle1, ellipse);
-        } else if(shape is Polygon polygon) {
-            return WithPolygon(rectangle1, polygon);
         } else if(shape is Triangle triangle) {
             return WithTriangle(rectangle1, triangle);
         } else if(shape is Rectangle rectangle2) {
             return WithRectangle(rectangle1, rectangle2);
+        } else if(shape is Polygon polygon) {
+            return WithPolygon(rectangle1, polygon);
         } else if(shape is Line line) {
             return WithLine(rectangle1, line);
         } else {

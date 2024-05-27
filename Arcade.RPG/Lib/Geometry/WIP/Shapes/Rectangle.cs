@@ -14,35 +14,35 @@ public class Rectangle : Polygon {
                 new Vector2(origin.X, origin.Y + height) }) { }
 
     public float Width {
-        get => Vector2.Distance(Vertices[0], Vertices[1]);
+        get => Vector2.Distance(this.Vertices[0], this.Vertices[1]);
     }
 
     public float Height {
-        get => Vector2.Distance(Vertices[1], Vertices[2]);
+        get => Vector2.Distance(this.Vertices[1], this.Vertices[2]);
     }
 
     public Vector2 TopLeft {
-        get => Vertices[0];
+        get => this.Vertices[0];
     }
     public Vector2 TopRight {
-        get => Vertices[1];
+        get => this.Vertices[1];
     }
     public Vector2 BottomRight {
-        get => Vertices[2];
+        get => this.Vertices[2];
     }
     public Vector2 BottomLeft {
-        get => Vertices[3];
+        get => this.Vertices[3];
     }
     public Vector2 Center {
-        get => new Vector2((Vertices[0].X + Vertices[2].X) / 2, (Vertices[0].Y + Vertices[2].Y) / 2);
+        get => new Vector2((this.Vertices[0].X + this.Vertices[2].X) / 2, (this.Vertices[0].Y + this.Vertices[2].Y) / 2);
     }
 
     public override float Perimeter {
         get {
             float perimeter = 0f;
-            for(int i = 0; i < Vertices.Count; i++) {
-                Vector2 current = Vertices[i];
-                Vector2 next = Vertices[(i + 1) % Vertices.Count];
+            for(int i = 0; i < this.Vertices.Count; i++) {
+                Vector2 current = this.Vertices[i];
+                Vector2 next = this.Vertices[(i + 1) % this.Vertices.Count];
                 perimeter += Vector2.Distance(current, next);
             }
             return perimeter;
@@ -52,9 +52,9 @@ public class Rectangle : Polygon {
     public override float Area {
         get {
             float area = 0f;
-            for(int i = 0; i < Vertices.Count; i++) {
-                Vector2 current = Vertices[i];
-                Vector2 next = Vertices[(i + 1) % Vertices.Count];
+            for(int i = 0; i < this.Vertices.Count; i++) {
+                Vector2 current = this.Vertices[i];
+                Vector2 next = this.Vertices[(i + 1) % this.Vertices.Count];
                 area += current.X * next.Y - next.X * current.Y;
             }
             return Math.Abs(area) / 2f;
@@ -62,7 +62,7 @@ public class Rectangle : Polygon {
     }
 
     public override bool Contains(Vector2 point) {
-        return point.X >= Vertices[0].X && point.X <= Vertices[1].X && point.Y >= Vertices[0].Y && point.Y <= Vertices[2].Y;
+        return point.X >= this.TopLeft.X && point.X <= this.TopRight.X && point.Y >= this.TopLeft.Y && point.Y <= this.BottomRight.Y;
     }
 
     public static Rectangle CreateSquare(Vector2 origin, float sideLength) {

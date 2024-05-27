@@ -3,13 +3,14 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Arcade.RPG.Worlds;
 using Arcade.RPG.Configs;
 using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using System.Collections.Generic;
 using Arcade.RPG.Systems;
+using Arcade.RPG.Lib.Utility;
+using Arcade.RPG.Lib.Geometry.Shapes;
 
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
@@ -18,11 +19,10 @@ public class RPG : Game {
 
     public Config Config { get; set; }
 
-    public Dictionary<EnumSystemType, System> Systems { get; set; }
+    //TODO: Implement a SystemManager
+    public TemporalDictionary<EnumSystemType, System> Systems { get; set; }
 
     public World World { get; set; }
-
-    private MouseState previousMouseState = Mouse.GetState();
 
     public RPG() {
         this.graphics = new GraphicsDeviceManager(this);
@@ -39,8 +39,11 @@ public class RPG : Game {
         this.graphics.ApplyChanges();
 
 
-        this.Systems = new Dictionary<EnumSystemType, System> {
-            { EnumSystemType.World, new WorldSystem(this) }
+        this.Systems = new TemporalDictionary<EnumSystemType, System> {
+            { EnumSystemType.Input, new InputSystem(this) },
+            { EnumSystemType.World, new WorldSystem(this) },
+            { EnumSystemType.Physics, new PhysicsSystem(this) },
+            { EnumSystemType.Entity, new EntitySystem(this) }
         };
 
         this.World = new AtlasWorld("demoCaveMap", this);
@@ -49,7 +52,15 @@ public class RPG : Game {
         this.Config.Viewport.Subject = new Entity {
             components = new Dictionary<EnumComponentType, IComponent> {
                 { EnumComponentType.Physics, new Physics(
-                    position: new Vector2(2, 2),
+                    //model: new Lib.Geometry.Shapes.Circle(
+                    //    origin: new Vector2(2, 2),
+                    //    radius: 0.5f
+                    //),
+                    model: new Lib.Geometry.Shapes.Rectangle(
+                        origin: new Vector2(2, 2),
+                        width: 2,
+                        height: 1
+                    ),
                     velocity: Vector2.Zero,
                     speed: 4.0f
                 )},
@@ -65,6 +76,32 @@ public class RPG : Game {
             payload: this.Config.Viewport.Subject
         ));
         this.Config.SyncWithSubject();
+
+        //STUB: Temporary test code
+        this.Route(EnumSystemType.World, new Message(
+            type: WorldSystem.EnumAction.JoinWorld,
+            payload: new Entity {
+                components = new Dictionary<EnumComponentType, IComponent> {
+                    { EnumComponentType.Physics, new Physics(
+                        //model: new Lib.Geometry.Shapes.Circle(
+                        //    origin: new Vector2(3,3),
+                        //    radius: 0.5f
+                        //),
+                        model: new Lib.Geometry.Shapes.Rectangle(
+                            origin: new Vector2(3, 3),
+                            width: 1,
+                            height: 1
+                        ),
+                        velocity: Vector2.Zero,
+                        speed: 4.0f
+                    )},
+                    { EnumComponentType.Graphics, new Graphics(
+                        graphicsDevice: this.GraphicsDevice,
+                        color: Color.Red
+                    )}
+                }
+            }
+        ));
     }
 
     public void Route(EnumSystemType to, Message message) {
@@ -79,87 +116,71 @@ public class RPG : Game {
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
     }
 
-
-
     protected override void Update(GameTime gameTime) {
-        MouseState mouseState = Mouse.GetState();
-        KeyboardState keyboardState = Keyboard.GetState();
-
-        if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || keyboardState.IsKeyDown(Keys.Escape)) {
-            Exit();
+        if(this.Config.Settings.IsPaused) {
+            /* Allow InputSystem to continue updating */
+            this.Systems[EnumSystemType.Input].Update(this, gameTime);
+            return;
         }
 
-
-        Physics physics = this.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
-        Vector2 newVelocity = Vector2.Zero;
-
-        if(keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left)) {
-            newVelocity.X = -1.0f;
-        } else if(keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right)) {
-            newVelocity.X = 1.0f;
-        }
-        if(keyboardState.IsKeyDown(Keys.W) || keyboardState.IsKeyDown(Keys.Up)) {
-            newVelocity.Y = -1.0f;
-        } else if(keyboardState.IsKeyDown(Keys.S) || keyboardState.IsKeyDown(Keys.Down)) {
-            newVelocity.Y = 1.0f;
-        }
-
-        physics.Velocity = newVelocity;
-
-
-        int scrollDelta = mouseState.ScrollWheelValue - this.previousMouseState.ScrollWheelValue;
-        if(scrollDelta > 0) {
-            this.Config.Viewport.Zoom.Current *= 1 + this.Config.Viewport.Zoom.Step;
-        } else if(scrollDelta < 0) {
-            this.Config.Viewport.Zoom.Current *= 1 - this.Config.Viewport.Zoom.Step;
-        }
-
-        this.Config.Viewport.Zoom.Current = Math.Min(this.Config.Viewport.Zoom.Max, Math.Max(this.Config.Viewport.Zoom.Min, this.Config.Viewport.Zoom.Current));
-        this.Config.SyncWithSubject();
-
+        /* Iterate over each System in registration order and Update */
         foreach(KeyValuePair<EnumSystemType, System> system in this.Systems) {
             system.Value.Update(this, gameTime);
         }
 
+        /* Invoke super, just in cast it matters */
         base.Update(gameTime);
-
-        this.previousMouseState = mouseState;
     }
 
     protected override void Draw(GameTime gameTime) {
+        if(this.Config.Settings.IsPaused) {
+            return;
+        }
+
+        /* Clear the screen to black */
         GraphicsDevice.Clear(Color.Black);
 
-        float zoom = this.Config.Viewport.Zoom.Current;
+        /* Attempt to center drawing around the subject */
+        if(this.Config.Viewport.Subject != null) {
+            Physics subjectPhysics = this.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
+            Vector2 subjectPosition = subjectPhysics.Position;
 
-        Physics subjectPhysics = this.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
-        Vector2 subjectPosition = subjectPhysics.Position;
+            float viewportWidth = GraphicsDevice.Viewport.Width;
+            float viewportHeight = GraphicsDevice.Viewport.Height;
+            float zoom = this.Config.Viewport.Zoom.Current;
 
-        float viewportWidth = GraphicsDevice.Viewport.Width;
-        float viewportHeight = GraphicsDevice.Viewport.Height;
+            Vector3 viewportCenter = new Vector3(viewportWidth / 2f, viewportHeight / 2f, 0);
 
-        Vector3 viewportCenter = new Vector3(viewportWidth / 2f, viewportHeight / 2f, 0);
+            float pixelX = -subjectPosition.X * this.Config.Viewport.TileBaseWidth - this.Config.Viewport.TileBaseWidth / 2;
+            float pixelY = -subjectPosition.Y * this.Config.Viewport.TileBaseHeight - this.Config.Viewport.TileBaseHeight / 2;
 
-        float pixelX = -subjectPosition.X * this.Config.Viewport.TileBaseWidth - this.Config.Viewport.TileBaseWidth / 2;
-        float pixelY = -subjectPosition.Y * this.Config.Viewport.TileBaseHeight - this.Config.Viewport.TileBaseHeight / 2;
+            Matrix translationMatrix = Matrix.CreateTranslation(
+                new Vector3(
+                    pixelX,
+                    pixelY,
+                    0
+                )
+            );
+            Matrix transformationMatrix = translationMatrix * Matrix.CreateScale(zoom, zoom, 1f) * Matrix.CreateTranslation(viewportCenter);
 
-        Matrix translationMatrix = Matrix.CreateTranslation(
-            new Vector3(
-                pixelX,
-                pixelY,
-                0
-            )
-        );
-        Matrix transformationMatrix = translationMatrix * Matrix.CreateScale(zoom, zoom, 1f) * Matrix.CreateTranslation(viewportCenter);
+            this.spriteBatch.Begin(
+                samplerState: SamplerState.PointClamp,
+                transformMatrix: transformationMatrix
+            );
+        } else {
+            this.spriteBatch.Begin(
+                samplerState: SamplerState.PointClamp
+            );
+        }
 
-        this.spriteBatch.Begin(
-            samplerState: SamplerState.PointClamp,
-            transformMatrix: transformationMatrix
-        );
-
-        this.World.Draw(this, GraphicsDevice, gameTime, this.spriteBatch);
+        /* Iterate over each System in registration order and Draw */
+        foreach(KeyValuePair<EnumSystemType, System> system in this.Systems) {
+            system.Value.Draw(this, GraphicsDevice, gameTime, this.spriteBatch);
+        }
 
         this.spriteBatch.End();
 
+        /* Invoke super, just in cast it matters */
         base.Draw(gameTime);
     }
 

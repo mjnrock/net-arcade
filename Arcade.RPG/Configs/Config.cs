@@ -14,6 +14,7 @@ public class Config {
 
     public Config() {
         this.Settings = new Settings {
+            IsPaused = false,
             ArcadeMode = false,
             Difficulty = 1.0f
         };

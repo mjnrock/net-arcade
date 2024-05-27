@@ -10,7 +10,9 @@ public class TerrainEntity : Entity {
 
     public TerrainEntity(int x, int y, Terrain terrain) : base() {
         this.AddComponent(EnumComponentType.Physics, new Physics(
-            position: new Vector2(x, y),
+            model: new Lib.Geometry.Shapes.Shape(
+                origin: new Vector2(x, y)
+            ),
             velocity: Vector2.Zero
         ));
 

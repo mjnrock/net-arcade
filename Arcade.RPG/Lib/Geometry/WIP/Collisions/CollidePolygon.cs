@@ -37,12 +37,12 @@ public class CollidePolygon {
             return WithCircle(polygon1, circle);
         } else if(shape is Ellipse ellipse) {
             return WithEllipse(polygon1, ellipse);
-        } else if(shape is Polygon polygon2) {
-            return WithPolygon(polygon1, polygon2);
         } else if(shape is Triangle triangle) {
             return WithTriangle(polygon1, triangle);
         } else if(shape is Rectangle rectangle) {
             return WithRectangle(polygon1, rectangle);
+        } else if(shape is Polygon polygon2) {
+            return WithPolygon(polygon1, polygon2);
         } else if(shape is Line line) {
             return WithLine(polygon1, line);
         } else {

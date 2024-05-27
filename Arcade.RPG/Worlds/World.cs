@@ -51,15 +51,4 @@ public class World : Identity {
 
         return this;
     }
-
-    public void Update(RPG game, GameTime gameTime) {
-        foreach(Entity entity in this.EntityManager.cache) {
-            entity.Update(game, gameTime);
-        }
-    }
-    public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
-        foreach(Entity entity in this.EntityManager.cache) {
-            entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
-        }
-    }
 }

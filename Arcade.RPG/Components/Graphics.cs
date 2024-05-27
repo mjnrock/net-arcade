@@ -41,7 +41,7 @@ public class Graphics : Component {
         this.texture.SetData(new[] { this.color });
     }
 
-    public override void Update(RPG game, GameTime gameTime, Entity entity) {}
+    public override void Update(RPG game, GameTime gameTime, Entity entity) { }
 
     public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
         Physics physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
@@ -62,13 +62,22 @@ public class Graphics : Component {
                 height: height
             ), this.color);
         } else {
-            Texture2D circle = Graphics.CreateCircleTexture(graphicsDevice, game.Config.Viewport.TileBaseWidth / 2);
-            spriteBatch.Draw(circle, new Rectangle(
-                x: pixelX,
-                y: pixelY,
-                width: width,
-                height: height
-            ), this.color);
+            if(physicsComponent.Model is Lib.Geometry.Shapes.Rectangle rectangle) {
+                spriteBatch.Draw(this.texture, new Rectangle(
+                    x: pixelX,
+                    y: pixelY,
+                    width: (int)(width * rectangle.Width),
+                    height: (int)(height * rectangle.Height)
+                ), this.color);
+            } else if(physicsComponent.Model is Lib.Geometry.Shapes.Circle) {
+                Texture2D circle = Graphics.CreateCircleTexture(graphicsDevice, game.Config.Viewport.TileBaseWidth / 2);
+                spriteBatch.Draw(circle, new Rectangle(
+                    x: pixelX,
+                    y: pixelY,
+                    width: width,
+                    height: height
+                ), this.color);
+            }
         }
     }
 

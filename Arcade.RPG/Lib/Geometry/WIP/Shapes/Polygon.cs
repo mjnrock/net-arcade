@@ -12,15 +12,15 @@ public class Polygon : Shape {
         if(vertices.Count < 3) {
             throw new ArgumentException("A polygon must have at least 3 vertices.");
         }
-        Vertices = vertices;
+        this.Vertices = vertices;
     }
 
     public virtual float Perimeter {
         get {
             float perimeter = 0f;
-            for(int i = 0; i < Vertices.Count; i++) {
-                Vector2 current = Vertices[i];
-                Vector2 next = Vertices[(i + 1) % Vertices.Count];
+            for(int i = 0; i < this.Vertices.Count; i++) {
+                Vector2 current = this.Vertices[i];
+                Vector2 next = this.Vertices[(i + 1) % this.Vertices.Count];
                 perimeter += Vector2.Distance(current, next);
             }
             return perimeter;
@@ -30,9 +30,9 @@ public class Polygon : Shape {
     public virtual float Area {
         get {
             float area = 0f;
-            for(int i = 0; i < Vertices.Count; i++) {
-                Vector2 current = Vertices[i];
-                Vector2 next = Vertices[(i + 1) % Vertices.Count];
+            for(int i = 0; i < this.Vertices.Count; i++) {
+                Vector2 current = this.Vertices[i];
+                Vector2 next = this.Vertices[(i + 1) % this.Vertices.Count];
                 area += current.X * next.Y - next.X * current.Y;
             }
             return Math.Abs(area) / 2f;
@@ -40,13 +40,13 @@ public class Polygon : Shape {
     }
 
     public override bool Contains(Vector2 point) {
-        int count = Vertices.Count;
+        int count = this.Vertices.Count;
         bool result = false;
         int j = count - 1;
 
         for(int i = 0; i < count; i++) {
-            if(Vertices[i].Y < point.Y && Vertices[j].Y >= point.Y || Vertices[j].Y < point.Y && Vertices[i].Y >= point.Y) {
-                if(Vertices[i].X + (point.Y - Vertices[i].Y) / (Vertices[j].Y - Vertices[i].Y) * (Vertices[j].X - Vertices[i].X) < point.X) {
+            if(this.Vertices[i].Y < point.Y && this.Vertices[j].Y >= point.Y || this.Vertices[j].Y < point.Y && this.Vertices[i].Y >= point.Y) {
+                if(this.Vertices[i].X + (point.Y - this.Vertices[i].Y) / (this.Vertices[j].Y - this.Vertices[i].Y) * (this.Vertices[j].X - this.Vertices[i].X) < point.X) {
                     result = !result;
                 }
             }

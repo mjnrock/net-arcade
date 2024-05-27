@@ -51,7 +51,5 @@ public class WorldSystem : System {
                 entMgr.WriteCache(entity);
             });
         }
-
-        world.Update(game, gameTime);
     }
 }

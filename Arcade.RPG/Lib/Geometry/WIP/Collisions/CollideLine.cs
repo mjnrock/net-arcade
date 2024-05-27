@@ -53,18 +53,18 @@ public abstract class CollideLine {
     }
 
     public static bool With(Line line1, Shape shape) {
-        if(shape is Line line2) {
-            return WithLine(line1, line2);
-        } else if(shape is Circle circle) {
+        if(shape is Circle circle) {
             return WithCircle(line1, circle);
         } else if(shape is Ellipse ellipse) {
             return WithEllipse(line1, ellipse);
-        } else if(shape is Polygon polygon) {
-            return WithPolygon(line1, polygon);
         } else if(shape is Triangle triangle) {
             return WithTriangle(line1, triangle);
         } else if(shape is Rectangle rectangle) {
             return WithRectangle(line1, rectangle);
+        } else if(shape is Polygon polygon) {
+            return WithPolygon(line1, polygon);
+        } else if(shape is Line line2) {
+            return WithLine(line1, line2);
         } else {
             return false;
         }
