@@ -9,6 +9,7 @@ using Arcade.RPG.Configs;
 using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using System.Collections.Generic;
+using Arcade.RPG.Systems;
 
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
@@ -16,6 +17,11 @@ public class RPG : Game {
     public Random random;
 
     public Config Config { get; set; }
+
+    public Dictionary<EnumSystemType, System> Systems { get; set; } = new Dictionary<EnumSystemType, System> {
+        { EnumSystemType.World, new WorldSystem() },
+    };
+
     public World World { get; set; }
 
     private MouseState previousMouseState = Mouse.GetState();
@@ -101,9 +107,9 @@ public class RPG : Game {
         } else if(scrollDelta < 0) {
             this.Config.Viewport.Zoom.Current *= 1 - this.Config.Viewport.Zoom.Step;
         }
+
         this.Config.Viewport.Zoom.Current = Math.Min(this.Config.Viewport.Zoom.Max, Math.Max(this.Config.Viewport.Zoom.Min, this.Config.Viewport.Zoom.Current));
-
-
+        this.Config.SyncWithSubject();
 
         this.World.Update(this, gameTime);
 

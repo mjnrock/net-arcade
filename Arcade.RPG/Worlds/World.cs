@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Lib;
 using Arcade.RPG.Lib.Models;
@@ -53,7 +54,27 @@ public class World : Identity {
 
     public void Update(RPG game, GameTime gameTime) {
         this.entityManager.ClearCache();
-        this.entities.ForEach(entity => this.entityManager.WriteCache(entity));
+
+        Entity viewportSubject = this.game.Config.Viewport.Subject;
+        Components.Physics physics = viewportSubject.GetComponent<Components.Physics>(EnumComponentType.Physics);
+
+        if(physics != null) {
+            this.entities.ForEach(entity => {
+                Components.Physics physics = entity.GetComponent<Components.Physics>(EnumComponentType.Physics);
+
+                if(physics != null) {
+                    Vector2 position = physics.Position;
+
+                    if(game.Config.IsWithinViewport(position, 1.0f)) {
+                        this.entityManager.WriteCache(entity);
+                    }
+                }
+            });
+        } else {
+            this.entities.ForEach(entity => {
+                this.entityManager.WriteCache(entity);
+            });
+        }
 
         foreach(Entity entity in this.entityManager.cache) {
             entity.Update(game, gameTime);

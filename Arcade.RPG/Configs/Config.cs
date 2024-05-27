@@ -23,8 +23,8 @@ public class Config {
             TileBaseWidth = 32,
             TileX = 0,
             TileY = 0,
-            TileXRadius = 7,
-            TileYRadius = 5,
+            TileXRadius = 20,
+            TileYRadius = 15,
             Zoom = new Zoom {
                 Current = 1.0f,
                 Step = 0.1f,
@@ -62,5 +62,31 @@ public class Config {
                 Height = 3
             }
         };
+    }
+
+    public bool SyncWithSubject() {
+        if(this.Viewport.Subject == null) {
+            return false;
+        }
+
+        Components.Physics physics = this.Viewport.Subject.GetComponent<Components.Physics>(EnumComponentType.Physics);
+
+        this.Viewport.TileX = physics.Position.X;
+        this.Viewport.TileY = physics.Position.Y;
+
+        return true;
+    }
+    public bool IsWithinViewport(Vector2 position, float buffer = 0.0f) {
+        float tileX = this.Viewport.TileX;
+        float tileY = this.Viewport.TileY;
+        float tileXRadius = this.Viewport.TileXRadius;
+        float tileYRadius = this.Viewport.TileYRadius;
+
+        float leftBound = tileX - tileXRadius;
+        float rightBound = tileX + tileXRadius;
+        float topBound = tileY - tileYRadius;
+        float bottomBound = tileY + tileYRadius;
+
+        return position.X >= leftBound - buffer && position.X <= rightBound + buffer && position.Y >= topBound - buffer && position.Y <= bottomBound + buffer;
     }
 }
