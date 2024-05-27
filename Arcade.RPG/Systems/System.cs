@@ -9,8 +9,8 @@ public class System {
         this.Game = game;
     }
 
-    public virtual void Receive(Message message) {
-    }
+    public virtual void Receive(Message message) {}
+    /* Push a message to the game's router */
     public virtual void Route(EnumSystemType to, Message message) {
         this.Game.Route(to, message);
     }
