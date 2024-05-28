@@ -27,8 +27,9 @@ public class WorldSystem : System {
     }
 
     public override void Update(RPG game, GameTime gameTime) {
-        World world = game.World;
-        EntityManager entMgr = world.EntityManager;
+        AtlasWorld world = game.World as AtlasWorld;
+        EntityManager entMgr = world.entityManager;
+
         entMgr.ClearCache();
 
         Entity viewportSubject = game.Config.Viewport.Subject;
@@ -51,5 +52,7 @@ public class WorldSystem : System {
                 entMgr.WriteCache(entity);
             });
         }
+
+        world.RefreshQuadTree();
     }
 }

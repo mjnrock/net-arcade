@@ -10,12 +10,13 @@ using Arcade.RPG.Entities;
 using System.Collections.Generic;
 using Arcade.RPG.Systems;
 using Arcade.RPG.Lib.Utility;
-using Arcade.RPG.Lib.Geometry.Shapes;
 
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
     public SpriteBatch spriteBatch;
     public Random random = new Random();
+
+    public RPGDebug Debug = new RPGDebug();
 
     public Config Config { get; set; }
 

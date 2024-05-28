@@ -17,14 +17,14 @@ public class EntitySystem : System {
 
 
     public override void Update(RPG game, GameTime gameTime) {
-        EntityManager entMgr = game.World.EntityManager;
+        EntityManager entMgr = game.World.entityManager;
 
         foreach(Entity entity in entMgr.cache) {
             entity.Update(game, gameTime);
         }
     }
     public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
-        EntityManager entMgr = game.World.EntityManager;
+        EntityManager entMgr = game.World.entityManager;
 
         foreach(Entity entity in entMgr.cache) {
         //foreach(Entity entity in entMgr) {

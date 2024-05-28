@@ -3,4 +3,4 @@
 public enum EnumResourceType {
     Health,
     Mana,
-}
+};

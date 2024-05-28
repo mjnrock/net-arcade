@@ -1,6 +1,4 @@
-﻿using Arcade.RPG.Systems.Messaging;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Arcade.RPG.Systems;

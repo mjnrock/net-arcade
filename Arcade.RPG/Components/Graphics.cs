@@ -30,7 +30,7 @@ public class Graphics : Component {
         int width = game.Config.Viewport.TileBaseWidth;
         int height = game.Config.Viewport.TileBaseHeight;
 
-        if(physicsComponent.Model is Lib.Geometry.Shapes.Shape shape) {
+        if(physicsComponent.model is Lib.Geometry.Shapes.Shape shape) {
             if(shape is Lib.Geometry.Shapes.Circle circle) {
                 int radius = (int)(circle.Radius * game.Config.Viewport.TileBaseWidth);
 

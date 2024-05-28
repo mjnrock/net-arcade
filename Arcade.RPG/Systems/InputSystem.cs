@@ -53,7 +53,7 @@ public class InputSystem : System {
             newVelocity.Y = 1.0f;
         }
 
-        playerPhysics.Velocity = newVelocity;
+        playerPhysics.velocity = newVelocity;
     }
     public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
         MouseState mouseState = Mouse.GetState();
