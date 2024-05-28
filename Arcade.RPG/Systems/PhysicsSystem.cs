@@ -4,9 +4,7 @@ using Arcade.RPG.Entities;
 using Arcade.RPG.Lib.Geometry.Collisions;
 using Arcade.RPG.Worlds;
 
-using global::System;
 using global::System.Collections.Generic;
-using global::System.Diagnostics;
 
 using Microsoft.Xna.Framework;
 
@@ -17,7 +15,7 @@ public class PhysicsSystem : System {
     }
 
     public override void Receive(Message message) {
-        Debug.WriteLine($"PhysicsSystem received message: {message.Type}");
+        this.Game.Debug.Log($"Received message: {message.Type}");
     }
 
     public override void Update(RPG game, GameTime gameTime) {

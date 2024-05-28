@@ -5,8 +5,8 @@ using System;
 using Microsoft.Xna.Framework;
 
 public class Rectangle : Shape {
-    public float Width { get; set; }
-    public float Height { get; set; }
+    public override float Width { get; set; }
+    public override float Height { get; set; }
 
     public Rectangle(Vector2 origin, float width, float height) : base(origin) {
         this.Width = width;

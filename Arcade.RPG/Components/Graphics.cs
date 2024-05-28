@@ -1,6 +1,7 @@
 ﻿namespace Arcade.RPG.Components;
 
 using Arcade.RPG.Entities;
+using Arcade.RPG.Lib.Geometry.Shapes;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ public class Graphics : Component {
     public Texture2D texture;
     public int size;
     public Color color;
+    public Shape model;
 
     public Graphics(GraphicsDevice graphicsDevice, Color color) : base(EnumComponentType.Graphics) {
         this.color = color;
@@ -17,10 +19,16 @@ public class Graphics : Component {
         this.texture.SetData(new[] { this.color });
     }
 
-    public override void Update(RPG game, GameTime gameTime, Entity entity) { }
-
     public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
         Physics physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
+
+        if(this.model == null) {
+            this.model = physicsComponent.model;
+
+            if(this.model is Circle circle) {
+                this.texture = CreateCircleTexture(graphicsDevice, (int)(circle.Radius * game.Config.Viewport.TileBaseWidth), this.color);
+            }
+        }
 
         Vector2 position = physicsComponent.Position;
 
@@ -34,9 +42,8 @@ public class Graphics : Component {
             if(shape is Lib.Geometry.Shapes.Circle circle) {
                 int radius = (int)(circle.Radius * game.Config.Viewport.TileBaseWidth);
 
-                Texture2D circleTexture = CreateCircleTexture(graphicsDevice, radius, this.color);
                 spriteBatch.Draw(
-                    circleTexture,
+                    this.texture,
                     new Vector2(pixelX - radius, pixelY - radius),
                     this.color
                 );

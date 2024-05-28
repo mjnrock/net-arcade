@@ -4,8 +4,6 @@ using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Worlds;
 
-using global::System.Diagnostics;
-
 using Microsoft.Xna.Framework;
 
 public class WorldSystem : System {
@@ -15,7 +13,7 @@ public class WorldSystem : System {
     }
 
     public override void Receive(Message message) {
-        Debug.WriteLine($"WorldSystem received message: {message.Type}");
+        this.Game.Debug.Log($"Received message: {message.Type}");
 
         if(message.Type == EnumAction.JoinWorld.ToString()) {
             Entity entity = message.Payload;

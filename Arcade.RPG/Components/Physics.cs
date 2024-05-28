@@ -32,6 +32,4 @@ public class Physics : Component {
         float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         this.Position += this.velocity * this.speed * elapsedTime;
     }
-
-    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) { }
 }

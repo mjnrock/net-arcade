@@ -55,15 +55,10 @@ public class RPG : Game {
                 { EnumComponentType.Physics, new Physics(
                     model: new Lib.Geometry.Shapes.Circle(
                         origin: new Vector2(2, 2),
-                        radius: 1.0f
+                        radius: 0.2f
                     ),
-                    //model: new Lib.Geometry.Shapes.Rectangle(
-                    //    origin: new Vector2(2, 2),
-                    //    width: 1,
-                    //    height: 1
-                    //),
                     velocity: Vector2.Zero,
-                    speed: 4.0f
+                    speed: 3.0f
                 )},
                 { EnumComponentType.Graphics, new Graphics(
                     graphicsDevice: this.GraphicsDevice,
@@ -84,10 +79,6 @@ public class RPG : Game {
             payload: new Entity {
                 components = new Dictionary<EnumComponentType, IComponent> {
                     { EnumComponentType.Physics, new Physics(
-                        //model: new Lib.Geometry.Shapes.Circle(
-                        //    origin: new Vector2(3,3),
-                        //    radius: 1.5f
-                        //),
                         model: new Lib.Geometry.Shapes.Rectangle(
                             origin: new Vector2(3, 3),
                             width: 2,

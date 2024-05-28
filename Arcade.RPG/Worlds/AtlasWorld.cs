@@ -49,7 +49,7 @@ public class AtlasWorld : World {
     public void RefreshQuadTree() {
         collisionQuadTree.Clear();
         foreach(Entity entity in this.entityManager.cache) {
-            collisionQuadTree.Insert(entity);
+            collisionQuadTree.Insert(this.game, entity);
         }
     }
 

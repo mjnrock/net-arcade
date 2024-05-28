@@ -1,12 +1,10 @@
 ﻿using Arcade.RPG.Components;
-using Arcade.RPG.Entities;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System;
-using System.Diagnostics;
 
 namespace Arcade.RPG.Systems;
 
@@ -18,7 +16,7 @@ public class InputSystem : System {
     public enum EnumAction { }
 
     public override void Receive(Message message) {
-        Debug.WriteLine($"InputSystem received message: {message.Type}");
+        this.Game.Debug.Log($"Received message: {message.Type}");
     }
 
 

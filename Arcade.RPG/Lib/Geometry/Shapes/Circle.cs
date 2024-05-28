@@ -11,6 +11,16 @@ public class Circle : Shape {
         this.Radius = radius;
     }
 
+    public override float Width {
+        get => this.Diameter;
+        set => this.Diameter = value;
+    }
+
+    public override float Height {
+        get => this.Diameter;
+        set => this.Diameter = value;
+    }
+
     public float Diameter {
         get => this.Radius * 2;
         set => this.Radius = value / 2;

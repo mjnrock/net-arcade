@@ -1,7 +1,9 @@
 ﻿namespace Arcade.Lib;
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
+using Arcade.RPG;
 using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 
@@ -25,7 +27,6 @@ public class EntityQuadTree {
 
     public void Clear() {
         Objects.Clear();
-
         for(int i = 0; i < Nodes.Length; i++) {
             if(Nodes[i] != null) {
                 Nodes[i].Clear();
@@ -35,10 +36,10 @@ public class EntityQuadTree {
     }
 
     private void Split() {
-        int subWidth = (int)(Bounds.Width / 2);
-        int subHeight = (int)(Bounds.Height / 2);
-        int x = (int)Bounds.X;
-        int y = (int)Bounds.Y;
+        int subWidth = Bounds.Width / 2;
+        int subHeight = Bounds.Height / 2;
+        int x = Bounds.X;
+        int y = Bounds.Y;
 
         Nodes[0] = new EntityQuadTree(Level + 1, new Rectangle(x + subWidth, y, subWidth, subHeight));
         Nodes[1] = new EntityQuadTree(Level + 1, new Rectangle(x, y, subWidth, subHeight));
@@ -51,10 +52,10 @@ public class EntityQuadTree {
         double verticalMidpoint = Bounds.X + (Bounds.Width / 2);
         double horizontalMidpoint = Bounds.Y + (Bounds.Height / 2);
 
-        bool topQuadrant = (pRect.Y < horizontalMidpoint && pRect.Y + pRect.Height < horizontalMidpoint);
-        bool bottomQuadrant = (pRect.Y > horizontalMidpoint);
+        bool topQuadrant = pRect.Y < horizontalMidpoint && (pRect.Y + pRect.Height) < horizontalMidpoint;
+        bool bottomQuadrant = pRect.Y > horizontalMidpoint;
 
-        if(pRect.X < verticalMidpoint && pRect.X + pRect.Width < verticalMidpoint) {
+        if(pRect.X < verticalMidpoint && (pRect.X + pRect.Width) < verticalMidpoint) {
             if(topQuadrant) {
                 index = 1;
             } else if(bottomQuadrant) {
@@ -71,19 +72,22 @@ public class EntityQuadTree {
         return index;
     }
 
-    public void Insert(Entity entity) {
+    public void Insert(RPG game, Entity entity) {
         Physics physics = entity.GetComponent<Physics>(EnumComponentType.Physics);
         if(physics == null) {
             return;
         }
 
-        Rectangle pRect = new Rectangle((int)physics.X, (int)physics.Y, 1, 1);
+        /* NOTE: This appears to have fixed the issue, but verify that it is correct */
+        int entityWidth = (int)physics.model.Width * game.Config.Viewport.TileBaseWidth;
+        int entityHeight = (int)physics.model.Height * game.Config.Viewport.TileBaseHeight;
+
+        Rectangle pRect = new Rectangle((int)physics.X, (int)physics.Y, entityWidth, entityHeight);
 
         if(Nodes[0] != null) {
             int index = GetIndex(pRect);
-
             if(index != -1) {
-                Nodes[index].Insert(entity);
+                Nodes[index].Insert(game, entity);
                 return;
             }
         }
@@ -98,10 +102,10 @@ public class EntityQuadTree {
             int i = 0;
             while(i < Objects.Count) {
                 Physics physicsObj = Objects[i].GetComponent<Physics>(EnumComponentType.Physics);
-                Rectangle objRect = new Rectangle((int)physicsObj.X, (int)physicsObj.Y, 1, 1);
+                Rectangle objRect = new Rectangle((int)physicsObj.X, (int)physicsObj.Y, entityWidth, entityHeight);
                 int index = GetIndex(objRect);
                 if(index != -1) {
-                    Nodes[index].Insert(Objects[i]);
+                    Nodes[index].Insert(game, Objects[i]);
                     Objects.RemoveAt(i);
                 } else {
                     i++;
@@ -117,7 +121,6 @@ public class EntityQuadTree {
         }
 
         returnObjects.AddRange(Objects);
-
         return returnObjects;
     }
 
@@ -127,7 +130,10 @@ public class EntityQuadTree {
             return new List<Entity>();
         }
 
-        Rectangle pRect = new Rectangle((int)physics.X, (int)physics.Y, 1, 1);
+        // Use actual entity dimensions if available
+        int entityWidth = 10; // Replace with actual width
+        int entityHeight = 10; // Replace with actual height
+        Rectangle pRect = new Rectangle((int)physics.X, (int)physics.Y, entityWidth, entityHeight);
         return Retrieve(new List<Entity>(), pRect);
     }
 }

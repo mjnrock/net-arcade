@@ -27,7 +27,6 @@ public class EntitySystem : System {
         EntityManager entMgr = game.World.entityManager;
 
         foreach(Entity entity in entMgr.cache) {
-        //foreach(Entity entity in entMgr) {
             entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
         }
     }

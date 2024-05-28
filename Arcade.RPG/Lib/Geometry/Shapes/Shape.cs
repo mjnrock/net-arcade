@@ -15,6 +15,16 @@ public class Shape(Vector2 origin) {
         set => this.Origin = new Vector2(this.Origin.X, value);
     }
 
+    public virtual float Width {
+        get => 0;
+        set { }
+    }
+
+    public virtual float Height {
+        get => 0;
+        set { }
+    }
+
     public static Shape Create(Vector2 origin) {
         return new Shape(origin);
     }
