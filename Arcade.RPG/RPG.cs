@@ -14,6 +14,7 @@ using Arcade.RPG.Lib.Utility;
 public class RPG : Game {
     public GraphicsDeviceManager graphics;
     public SpriteBatch spriteBatch;
+    public SpriteFont debugFont;
     public Random random = new Random();
 
     public RPGDebug Debug = new RPGDebug();
@@ -27,7 +28,7 @@ public class RPG : Game {
 
     public RPG() {
         this.graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
+        Content.RootDirectory = "Content/bin/Windows";
         IsMouseVisible = true;
 
         int screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -54,7 +55,7 @@ public class RPG : Game {
             components = new Dictionary<EnumComponentType, IComponent> {
                 { EnumComponentType.Physics, new Physics(
                     model: new Lib.Geometry.Shapes.Circle(
-                        origin: new Vector2(2, 2),
+                        origin: new Vector2(0, 2),
                         radius: 0.2f
                     ),
                     velocity: Vector2.Zero,
@@ -80,7 +81,7 @@ public class RPG : Game {
                 components = new Dictionary<EnumComponentType, IComponent> {
                     { EnumComponentType.Physics, new Physics(
                         model: new Lib.Geometry.Shapes.Rectangle(
-                            origin: new Vector2(3, 3),
+                            origin: new Vector2(0, 3),
                             width: 2,
                             height: 1
                         ),
@@ -105,6 +106,7 @@ public class RPG : Game {
     }
 
     protected override void LoadContent() {
+        this.debugFont = Content.Load<SpriteFont>("DebugFont");
         this.spriteBatch = new SpriteBatch(GraphicsDevice);
     }
 
@@ -143,8 +145,10 @@ public class RPG : Game {
 
             Vector3 viewportCenter = new Vector3(viewportWidth / 2f, viewportHeight / 2f, 0);
 
-            float pixelX = -subjectPosition.X * this.Config.Viewport.TileBaseWidth - this.Config.Viewport.TileBaseWidth / 2;
-            float pixelY = -subjectPosition.Y * this.Config.Viewport.TileBaseHeight - this.Config.Viewport.TileBaseHeight / 2;
+            //FIXME: Something about this is not correct, it doesn't transform the viewport correctly
+            //FIXME: Graphics may or not be correct, either; tbd after this offset culprit is found
+            float pixelX = -subjectPosition.X * this.Config.Viewport.TileBaseWidth - subjectPhysics.model.Width * this.Config.Viewport.TileBaseWidth / 2;
+            float pixelY = -subjectPosition.Y * this.Config.Viewport.TileBaseHeight - subjectPhysics.model.Height * this.Config.Viewport.TileBaseHeight / 2;
 
             Matrix translationMatrix = Matrix.CreateTranslation(
                 new Vector3(
@@ -168,6 +172,24 @@ public class RPG : Game {
         /* Iterate over each System in registration order and Draw */
         foreach(KeyValuePair<EnumSystemType, System> system in this.Systems) {
             system.Value.Draw(this, GraphicsDevice, gameTime, this.spriteBatch);
+        }
+
+        //STUB: DEBUG, draw entity positions
+        foreach(Entity entity in this.World.entityManager.cache) {
+            if(entity is TerrainEntity) continue;
+
+            Physics physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
+            Vector2 position = physicsComponent.Position;
+
+            this.spriteBatch.DrawString(
+                this.debugFont,
+                $"({position.X}, {position.Y})",
+                new Vector2(
+                    position.X * this.Config.Viewport.TileBaseWidth,
+                    position.Y * this.Config.Viewport.TileBaseHeight + this.Config.Viewport.TileBaseHeight
+                ),
+                Color.White
+            );
         }
 
         this.spriteBatch.End();

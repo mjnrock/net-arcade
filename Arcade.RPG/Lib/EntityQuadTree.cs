@@ -79,8 +79,8 @@ public class EntityQuadTree {
         }
 
         /* NOTE: This appears to have fixed the issue, but verify that it is correct */
-        int entityWidth = (int)physics.model.Width * game.Config.Viewport.TileBaseWidth;
-        int entityHeight = (int)physics.model.Height * game.Config.Viewport.TileBaseHeight;
+        int entityWidth = (int)(physics.model.Width * game.Config.Viewport.TileBaseWidth);
+        int entityHeight = (int)(physics.model.Height * game.Config.Viewport.TileBaseHeight);
 
         Rectangle pRect = new Rectangle((int)physics.X, (int)physics.Y, entityWidth, entityHeight);
 

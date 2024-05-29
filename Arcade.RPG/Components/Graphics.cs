@@ -1,20 +1,23 @@
 ﻿namespace Arcade.RPG.Components;
 
+using System;
+
 using Arcade.RPG.Entities;
-using Arcade.RPG.Lib.Geometry.Shapes;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Shapes = Arcade.RPG.Lib.Geometry.Shapes;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using System.Diagnostics;
+
 public class Graphics : Component {
     public Texture2D texture;
-    public int size;
     public Color color;
-    public Shape model;
+    public Shapes.Shape model;
 
     public Graphics(GraphicsDevice graphicsDevice, Color color) : base(EnumComponentType.Graphics) {
         this.color = color;
-
         this.texture = new Texture2D(graphicsDevice, 1, 1);
         this.texture.SetData(new[] { this.color });
     }
@@ -24,55 +27,43 @@ public class Graphics : Component {
 
         if(this.model == null) {
             this.model = physicsComponent.model;
-
-            if(this.model is Circle circle) {
-                this.texture = CreateCircleTexture(graphicsDevice, (int)(circle.Radius * game.Config.Viewport.TileBaseWidth), this.color);
-            }
+            UpdateTexture(graphicsDevice, game);
         }
 
-        Vector2 position = physicsComponent.Position;
+        DrawShape(spriteBatch, physicsComponent, game);
+    }
 
-        int pixelX = (int)(position.X * game.Config.Viewport.TileBaseWidth);
-        int pixelY = (int)(position.Y * game.Config.Viewport.TileBaseHeight);
-
-        int width = game.Config.Viewport.TileBaseWidth;
-        int height = game.Config.Viewport.TileBaseHeight;
-
-        if(physicsComponent.model is Lib.Geometry.Shapes.Shape shape) {
-            if(shape is Lib.Geometry.Shapes.Circle circle) {
-                int radius = (int)(circle.Radius * game.Config.Viewport.TileBaseWidth);
-
-                spriteBatch.Draw(
-                    this.texture,
-                    new Vector2(pixelX - radius, pixelY - radius),
-                    this.color
-                );
-            } else if(shape is Lib.Geometry.Shapes.Rectangle rectangle) {
-                spriteBatch.Draw(
-                    this.texture,
-                    new Microsoft.Xna.Framework.Rectangle(
-                        (int)(pixelX),
-                        (int)(pixelY),
-                        (int)(rectangle.Width * game.Config.Viewport.TileBaseWidth),
-                        (int)(rectangle.Height * game.Config.Viewport.TileBaseHeight)
-                    ),
-                    this.color
-                );
-            } else {
-                spriteBatch.Draw(
-                    this.texture,
-                    new Microsoft.Xna.Framework.Rectangle(
-                        pixelX,
-                        pixelY,
-                        width,
-                        height
-                    ),
-                    this.color
-                );
-            }
+    private void UpdateTexture(GraphicsDevice graphicsDevice, RPG game) {
+        if(this.model is Shapes.Circle circle) {
+            int radius = Math.Max(0, (int)Math.Round(circle.Radius * game.Config.Viewport.TileBaseWidth));
+            this.texture = CreateCircleTexture(graphicsDevice, radius, this.color);
+        } else if(this.model is Shapes.Rectangle rectangle) {
+            int width = Math.Max(0, (int)Math.Round(rectangle.Width * game.Config.Viewport.TileBaseWidth));
+            int height = Math.Max(0, (int)Math.Round(rectangle.Height * game.Config.Viewport.TileBaseHeight));
+            this.texture = CreateRectangleTexture(graphicsDevice, width, height, this.color);
         }
     }
 
+    private void DrawShape(SpriteBatch spriteBatch, Physics physicsComponent, RPG game) {
+        Vector2 position = physicsComponent.Position;
+
+        float x = position.X * game.Config.Viewport.TileBaseWidth - this.model.Width * game.Config.Viewport.TileBaseWidth / 2.0f;
+        float y = position.Y * game.Config.Viewport.TileBaseHeight + this.model.Height * game.Config.Viewport.TileBaseHeight / 2.0f;
+
+        spriteBatch.Draw(
+            this.texture,
+            new Vector2(
+                x,
+                y
+            ),
+            this.color
+        );
+
+        Physics subjectPhysics = game.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
+        if(physicsComponent == subjectPhysics) {
+            Debug.WriteLine($"Position: {new Vector2(x, y)}, Model Position: {position}, Model Width: {this.model.Width}, Model Height: {this.model.Height}");
+        }
+    }
 
     private static Texture2D CreateCircleTexture(GraphicsDevice graphicsDevice, int radius, Color color) {
         int diameter = radius * 2;
@@ -96,4 +87,23 @@ public class Graphics : Component {
         texture.SetData(data);
         return texture;
     }
+    private static Texture2D CreateRectangleTexture(GraphicsDevice graphicsDevice, int width, int height, Color color) {
+        if(width <= 0 || height <= 0) {
+            throw new ArgumentException("Width and height must be greater than zero.");
+        }
+
+        Texture2D texture = new Texture2D(graphicsDevice, width, height);
+        Color[] data = new Color[width * height];
+
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                int index = y * width + x;
+                data[index] = color;
+            }
+        }
+
+        texture.SetData(data);
+        return texture;
+    }
+
 }
