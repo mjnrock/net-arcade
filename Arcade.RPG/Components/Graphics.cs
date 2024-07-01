@@ -58,11 +58,6 @@ public class Graphics : Component {
             ),
             this.color
         );
-
-        Physics subjectPhysics = game.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
-        if(physicsComponent == subjectPhysics) {
-            Debug.WriteLine($"Position: {new Vector2(x, y)}, Model Position: {position}, Model Width: {this.model.Width}, Model Height: {this.model.Height}");
-        }
     }
 
     private static Texture2D CreateCircleTexture(GraphicsDevice graphicsDevice, int radius, Color color) {

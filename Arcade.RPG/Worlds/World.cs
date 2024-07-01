@@ -1,65 +1,51 @@
 ﻿namespace Arcade.RPG.Worlds;
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
-using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Lib;
-using Arcade.RPG.Lib.Models;
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 public class World : Identity {
-    public RPG Game;
-    public EntityManager EntityManager;
+    public RPG game;
+    public EntityManager entityManager;
 
     public World(RPG game) : base() {
-        this.Game = game;
-        this.EntityManager = new EntityManager();
+        this.game = game;
+        this.entityManager = new EntityManager();
     }
 
     public List<Entity> entities {
         get {
-            return this.EntityManager.entities;
+            return this.entityManager.entities;
         }
     }
     public List<Entity> cache {
         get {
-            return this.EntityManager.cache;
+            return this.entityManager.cache;
         }
     }
 
     public World AddEntity(Entity entity) {
-        this.EntityManager.Add(entity);
+        this.entityManager.Add(entity);
 
         return this;
     }
+
     public World AddEntities(List<Entity> entities) {
-        this.EntityManager.Add(entities);
+        this.entityManager.Add(entities);
 
         return this;
     }
+
     public World RemoveEntity(Entity entity) {
-        this.EntityManager.Remove(entity);
+        this.entityManager.Remove(entity);
 
         return this;
     }
+
     public World RemoveEntities(List<Entity> entities) {
-        this.EntityManager.Remove(entities);
+        this.entityManager.Remove(entities);
 
         return this;
-    }
-
-    public void Update(RPG game, GameTime gameTime) {
-        foreach(Entity entity in this.EntityManager.cache) {
-            entity.Update(game, gameTime);
-        }
-    }
-    public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
-        foreach(Entity entity in this.EntityManager.cache) {
-            entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
-        }
     }
 }
