@@ -1,72 +1,46 @@
 ﻿namespace Arcade.RPG.Lib.Geometry.Shapes;
 
 using System;
-using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-public class Rectangle : Polygon {
-    public Rectangle(Vector2 origin, float width, float height)
-        : base(new List<Vector2> {
-                origin,
-                new Vector2(origin.X + width, origin.Y),
-                new Vector2(origin.X + width, origin.Y + height),
-                new Vector2(origin.X, origin.Y + height) }) { }
+public class Rectangle : Shape {
+    public override float Width { get; set; }
+    public override float Height { get; set; }
 
-    public float Width {
-        get => Vector2.Distance(Vertices[0], Vertices[1]);
-    }
-
-    public float Height {
-        get => Vector2.Distance(Vertices[1], Vertices[2]);
+    public Rectangle(Vector2 origin, float width, float height) : base(origin) {
+        this.Width = width;
+        this.Height = height;
     }
 
     public Vector2 TopLeft {
-        get => Vertices[0];
+        get => this.Origin;
     }
     public Vector2 TopRight {
-        get => Vertices[1];
-    }
-    public Vector2 BottomRight {
-        get => Vertices[2];
+        get => new Vector2(this.Origin.X + this.Width, this.Origin.Y);
     }
     public Vector2 BottomLeft {
-        get => Vertices[3];
+        get => new Vector2(this.Origin.X, this.Origin.Y + this.Height);
     }
-    public Vector2 Center {
-        get => new Vector2((Vertices[0].X + Vertices[2].X) / 2, (Vertices[0].Y + Vertices[2].Y) / 2);
+    public Vector2 BottomRight {
+        get => new Vector2(this.Origin.X + this.Width, this.Origin.Y + this.Height);
     }
 
-    public override float Perimeter {
-        get {
-            float perimeter = 0f;
-            for(int i = 0; i < Vertices.Count; i++) {
-                Vector2 current = Vertices[i];
-                Vector2 next = Vertices[(i + 1) % Vertices.Count];
-                perimeter += Vector2.Distance(current, next);
-            }
-            return perimeter;
+    public float Perimeter {
+        get => 2 * (this.Width + this.Height);
+        set {
+            float ratio = value / this.Perimeter;
+            this.Width *= ratio;
+            this.Height *= ratio;
         }
     }
-
-    public override float Area {
-        get {
-            float area = 0f;
-            for(int i = 0; i < Vertices.Count; i++) {
-                Vector2 current = Vertices[i];
-                Vector2 next = Vertices[(i + 1) % Vertices.Count];
-                area += current.X * next.Y - next.X * current.Y;
-            }
-            return Math.Abs(area) / 2f;
+    public float Area {
+        get => this.Width * this.Height;
+        set {
+            float ratio = (float)Math.Sqrt(value / this.Area);
+            this.Width *= ratio;
+            this.Height *= ratio;
         }
-    }
-
-    public override bool Contains(Vector2 point) {
-        return point.X >= Vertices[0].X && point.X <= Vertices[1].X && point.Y >= Vertices[0].Y && point.Y <= Vertices[2].Y;
-    }
-
-    public static Rectangle CreateSquare(Vector2 origin, float sideLength) {
-        return new Rectangle(origin, sideLength, sideLength);
     }
 
     public static Rectangle Create(Vector2 origin, float width, float height) {

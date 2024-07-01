@@ -49,7 +49,11 @@ public class RPG : Game {
         this.Config.Viewport.Subject = new Entity {
             components = new Dictionary<EnumComponentType, IComponent> {
                 { EnumComponentType.Physics, new Physics(
-                    position: new Vector2(2, 2),
+                    model: new Lib.Geometry.Shapes.Rectangle(
+                        origin: new Vector2(2, 2),
+                        width: 1.0f,
+                        height: 1.0f
+                    ),
                     velocity: Vector2.Zero,
                     speed: 4.0f
                 )},
@@ -104,7 +108,7 @@ public class RPG : Game {
             newVelocity.Y = 1.0f;
         }
 
-        physics.Velocity = newVelocity;
+        physics.velocity = newVelocity;
 
 
         int scrollDelta = mouseState.ScrollWheelValue - this.previousMouseState.ScrollWheelValue;
