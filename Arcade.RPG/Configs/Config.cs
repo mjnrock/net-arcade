@@ -14,7 +14,6 @@ public class Config {
 
     public Config() {
         this.Settings = new Settings {
-            IsPaused = false,
             ArcadeMode = false,
             Difficulty = 1.0f
         };
@@ -27,7 +26,7 @@ public class Config {
             TileXRadius = 20,
             TileYRadius = 15,
             Zoom = new Zoom {
-                Current = 5.0f,
+                Current = 1.0f,
                 Step = 0.1f,
                 Min = 0.1f,
                 Max = 20.0f

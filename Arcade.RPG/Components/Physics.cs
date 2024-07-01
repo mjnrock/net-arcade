@@ -4,32 +4,23 @@ using Arcade.RPG.Entities;
 using Arcade.RPG;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Arcade.RPG.Lib.Geometry.Shapes;
+using System.Diagnostics;
 
 public class Physics : Component {
-    public Shape model { get; set; }
-    public Vector2 velocity { get; set; }
-    /* The speed/sec of the entity to be applied to the velocity each game loop */
-    public float speed { get; set; }
+    public Vector2 Position { get; set; }
+    public Vector2 Velocity { get; set; }
+    public float Speed { get; set; }
 
-    public Physics(Shape model, Vector2 velocity, float speed = 10.0f, string? id = null) : base(id, EnumComponentType.Physics) {
-        this.model = model;
-        this.velocity = velocity;
-        this.speed = speed;
-    }
-    public Vector2 Position {
-        get => model.Origin;
-        set => model.Origin = value;
-    }
-    public float X {
-        get => model.Origin.X;
-    }
-    public float Y {
-        get => model.Origin.Y;
+    public Physics(Vector2 position, Vector2 velocity, float speed = 10.0f, string? id = null) : base(id, EnumComponentType.Physics) {
+        this.Position = position;
+        this.Velocity = velocity;
+        this.Speed = speed;
     }
 
     public override void Update(RPG game, GameTime gameTime, Entity entity) {
         float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        this.Position += this.velocity * this.speed * elapsedTime;
+        this.Position += this.Velocity * this.Speed * elapsedTime;
     }
+
+    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) { }
 }

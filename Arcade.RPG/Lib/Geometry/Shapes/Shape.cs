@@ -6,23 +6,21 @@ public class Shape(Vector2 origin) {
     public Vector2 Origin { get; set; } = origin;
 
     public float X {
-        get => this.Origin.X;
-        set => this.Origin = new Vector2(value, this.Origin.Y);
+        get => Origin.X;
+        set => Origin = new Vector2(value, Origin.Y);
     }
 
     public float Y {
-        get => this.Origin.Y;
-        set => this.Origin = new Vector2(this.Origin.X, value);
+        get => Origin.Y;
+        set => Origin = new Vector2(Origin.X, value);
     }
 
-    public virtual float Width {
-        get => 0;
-        set { }
-    }
+    public virtual bool Contains(Vector2 point) {
+        if(point == Origin) {
+            return true;
+        }
 
-    public virtual float Height {
-        get => 0;
-        set { }
+        return false;
     }
 
     public static Shape Create(Vector2 origin) {

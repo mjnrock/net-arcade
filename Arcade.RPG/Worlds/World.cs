@@ -1,54 +1,65 @@
 ﻿namespace Arcade.RPG.Worlds;
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
-using Arcade.Lib;
+using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Lib;
+using Arcade.RPG.Lib.Models;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 public class World : Identity {
-    public RPG game;
-    public EntityManager entityManager;
+    public RPG Game;
+    public EntityManager EntityManager;
 
     public World(RPG game) : base() {
-        this.game = game;
-        this.entityManager = new EntityManager();
+        this.Game = game;
+        this.EntityManager = new EntityManager();
     }
 
     public List<Entity> entities {
         get {
-            return this.entityManager.entities;
+            return this.EntityManager.entities;
         }
     }
     public List<Entity> cache {
         get {
-            return this.entityManager.cache;
+            return this.EntityManager.cache;
         }
     }
 
     public World AddEntity(Entity entity) {
-        this.entityManager.Add(entity);
+        this.EntityManager.Add(entity);
 
         return this;
     }
-
     public World AddEntities(List<Entity> entities) {
-        this.entityManager.Add(entities);
+        this.EntityManager.Add(entities);
 
         return this;
     }
-
     public World RemoveEntity(Entity entity) {
-        this.entityManager.Remove(entity);
+        this.EntityManager.Remove(entity);
+
+        return this;
+    }
+    public World RemoveEntities(List<Entity> entities) {
+        this.EntityManager.Remove(entities);
 
         return this;
     }
 
-    public World RemoveEntities(List<Entity> entities) {
-        this.entityManager.Remove(entities);
-
-        return this;
+    public void Update(RPG game, GameTime gameTime) {
+        foreach(Entity entity in this.EntityManager.cache) {
+            entity.Update(game, gameTime);
+        }
+    }
+    public void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch) {
+        foreach(Entity entity in this.EntityManager.cache) {
+            entity.Draw(game, graphicsDevice, gameTime, spriteBatch);
+        }
     }
 }

@@ -1,109 +1,75 @@
 ﻿namespace Arcade.RPG.Components;
 
-using System;
-
 using Arcade.RPG.Entities;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Shapes = Arcade.RPG.Lib.Geometry.Shapes;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using System.Diagnostics;
 
 public class Graphics : Component {
     public Texture2D texture;
+    public int size;
     public Color color;
-    public Shapes.Shape model;
 
-    public Graphics(GraphicsDevice graphicsDevice, Color color) : base(EnumComponentType.Graphics) {
-        this.color = color;
-        this.texture = new Texture2D(graphicsDevice, 1, 1);
-        this.texture.SetData(new[] { this.color });
-    }
-
-    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
-        Physics physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
-
-        if(this.model == null) {
-            this.model = physicsComponent.model;
-            UpdateTexture(graphicsDevice, game);
-        }
-
-        DrawShape(spriteBatch, physicsComponent, game);
-    }
-
-    private void UpdateTexture(GraphicsDevice graphicsDevice, RPG game) {
-        if(this.model is Shapes.Circle circle) {
-            int radius = Math.Max(0, (int)Math.Round(circle.Radius * game.Config.Viewport.TileBaseWidth));
-            this.texture = CreateCircleTexture(graphicsDevice, radius, this.color);
-        } else if(this.model is Shapes.Rectangle rectangle) {
-            int width = Math.Max(0, (int)Math.Round(rectangle.Width * game.Config.Viewport.TileBaseWidth));
-            int height = Math.Max(0, (int)Math.Round(rectangle.Height * game.Config.Viewport.TileBaseHeight));
-            this.texture = CreateRectangleTexture(graphicsDevice, width, height, this.color);
-        }
-    }
-
-    private void DrawShape(SpriteBatch spriteBatch, Physics physicsComponent, RPG game) {
-        Vector2 position = physicsComponent.Position;
-
-        float x = position.X * game.Config.Viewport.TileBaseWidth - this.model.Width * game.Config.Viewport.TileBaseWidth / 2.0f;
-        float y = position.Y * game.Config.Viewport.TileBaseHeight + this.model.Height * game.Config.Viewport.TileBaseHeight / 2.0f;
-
-        spriteBatch.Draw(
-            this.texture,
-            new Vector2(
-                x,
-                y
-            ),
-            this.color
-        );
-
-        Physics subjectPhysics = game.Config.Viewport.Subject.GetComponent<Physics>(EnumComponentType.Physics);
-        if(physicsComponent == subjectPhysics) {
-            Debug.WriteLine($"Position: {new Vector2(x, y)}, Model Position: {position}, Model Width: {this.model.Width}, Model Height: {this.model.Height}");
-        }
-    }
-
-    private static Texture2D CreateCircleTexture(GraphicsDevice graphicsDevice, int radius, Color color) {
+    public static Texture2D CreateCircleTexture(GraphicsDevice graphicsDevice, int radius) {
         int diameter = radius * 2;
         Texture2D texture = new Texture2D(graphicsDevice, diameter, diameter);
-        Color[] data = new Color[diameter * diameter];
+        Color[] colorData = new Color[diameter * diameter];
 
-        float radiiSquared = radius * radius;
+        float radiussq = radius * radius;
 
-        for(int x = 0; x < diameter; x++) {
-            for(int y = 0; y < diameter; y++) {
-                int index = x * diameter + y;
+        for(int y = 0; y < diameter; y++) {
+            for(int x = 0; x < diameter; x++) {
+                int index = y * diameter + x;
                 Vector2 pos = new Vector2(x - radius, y - radius);
-                if(pos.LengthSquared() <= radiiSquared) {
-                    data[index] = color;
+                if(pos.LengthSquared() <= radiussq) {
+                    colorData[index] = Color.White;
                 } else {
-                    data[index] = Color.Transparent;
+                    colorData[index] = Color.Transparent;
                 }
             }
         }
 
-        texture.SetData(data);
+        texture.SetData(colorData);
         return texture;
     }
-    private static Texture2D CreateRectangleTexture(GraphicsDevice graphicsDevice, int width, int height, Color color) {
-        if(width <= 0 || height <= 0) {
-            throw new ArgumentException("Width and height must be greater than zero.");
+
+    public Graphics(GraphicsDevice graphicsDevice, Color color) : base(EnumComponentType.Graphics) {
+        this.color = color;
+
+        this.texture = new Texture2D(graphicsDevice, 1, 1);
+        this.texture.SetData(new[] { this.color });
+    }
+
+    public override void Update(RPG game, GameTime gameTime, Entity entity) {}
+
+    public override void Draw(RPG game, GraphicsDevice graphicsDevice, GameTime gameTime, SpriteBatch spriteBatch, Entity entity) {
+        Physics physicsComponent = entity.GetComponent<Physics>(EnumComponentType.Physics);
+
+        Vector2 position = physicsComponent.Position;
+
+        int pixelX = (int)(position.X * game.Config.Viewport.TileBaseWidth);
+        int pixelY = (int)(position.Y * game.Config.Viewport.TileBaseHeight);
+
+        int width = game.Config.Viewport.TileBaseWidth;
+        int height = game.Config.Viewport.TileBaseHeight;
+
+        if(entity is TerrainEntity) {
+            spriteBatch.Draw(this.texture, new Rectangle(
+                x: pixelX,
+                y: pixelY,
+                width: width,
+                height: height
+            ), this.color);
+        } else {
+            Texture2D circle = Graphics.CreateCircleTexture(graphicsDevice, game.Config.Viewport.TileBaseWidth / 2);
+            spriteBatch.Draw(circle, new Rectangle(
+                x: pixelX,
+                y: pixelY,
+                width: width,
+                height: height
+            ), this.color);
         }
-
-        Texture2D texture = new Texture2D(graphicsDevice, width, height);
-        Color[] data = new Color[width * height];
-
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++) {
-                int index = y * width + x;
-                data[index] = color;
-            }
-        }
-
-        texture.SetData(data);
-        return texture;
     }
 
 }

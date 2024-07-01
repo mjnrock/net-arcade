@@ -4,6 +4,8 @@ using Arcade.RPG.Components;
 using Arcade.RPG.Entities;
 using Arcade.RPG.Worlds;
 
+using global::System.Diagnostics;
+
 using Microsoft.Xna.Framework;
 
 public class WorldSystem : System {
@@ -13,7 +15,7 @@ public class WorldSystem : System {
     }
 
     public override void Receive(Message message) {
-        this.Game.Debug.Log($"Received message: {message.Type}");
+        Debug.WriteLine($"WorldSystem received message: {message.Type}");
 
         if(message.Type == EnumAction.JoinWorld.ToString()) {
             Entity entity = message.Payload;
@@ -25,9 +27,8 @@ public class WorldSystem : System {
     }
 
     public override void Update(RPG game, GameTime gameTime) {
-        AtlasWorld world = game.World as AtlasWorld;
-        EntityManager entMgr = world.entityManager;
-
+        World world = game.World;
+        EntityManager entMgr = world.EntityManager;
         entMgr.ClearCache();
 
         Entity viewportSubject = game.Config.Viewport.Subject;
@@ -51,6 +52,6 @@ public class WorldSystem : System {
             });
         }
 
-        world.RefreshQuadTree();
+        world.Update(game, gameTime);
     }
 }
