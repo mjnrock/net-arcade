@@ -5,11 +5,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Arcade.RPG.Components;
 using System.Collections.Generic;
 using Arcade.RPG.Lib;
+using System;
 
 public class Entity : Identity {
     public Dictionary<EnumComponentType, IComponent> components = new();
 
-    public Entity(Dictionary<EnumComponentType, IComponent>? components = null, string? id = null, Dictionary<string, string>? tags = null) : base(id, tags) {
+    public Entity(Dictionary<EnumComponentType, IComponent>? components = null, Guid? id = null, Dictionary<string, string>? tags = null) : base(id, tags) {
         if(components != null) {
             foreach(var component in components) {
                 this.AddComponent(component.Key, component.Value);
